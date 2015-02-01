@@ -2,8 +2,14 @@
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475" moduleId="org.eclipse.cdt.core.settings" name="Default">
-				<externalSettings/>
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475" moduleId="org.eclipse.cdt.core.settings" name="OSX">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/nostalgia"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nostalgia/Default"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="nostalgia" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
+				</externalSettings>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.MachO64" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -14,12 +20,16 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="nostalgia" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactExtension="jnilib" artifactName="nostalgia" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" description="" id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475" name="OSX" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.548112134" name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base.639641374" name="cdt.managedbuild.toolchain.gnu.macosx.base" nonInternalBuilderId="cdt.managedbuild.target.gnu.builder.macosx.base" superClass="cdt.managedbuild.toolchain.gnu.macosx.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.MachO64" id="cdt.managedbuild.target.gnu.platform.macosx.base.444416844" name="Debug Platform" osList="macosx" superClass="cdt.managedbuild.target.gnu.platform.macosx.base"/>
 							<builder buildPath="${workspace_loc:/nostalgia}/Default" id="cdt.managedbuild.target.gnu.builder.macosx.base.328107665" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.macosx.base"/>
-							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.base.1210516424" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base"/>
+							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.base.1210516424" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base">
+								<option defaultValue="true" id="macosx.c.link.option.nostart.748182289" name="Do not use standard start files (-nostartfiles)" superClass="macosx.c.link.option.nostart" valueType="boolean"/>
+								<option defaultValue="true" id="macosx.c.link.option.nodeflibs.1374264969" name="Do not use default libraries (-nodefaultlibs)" superClass="macosx.c.link.option.nodeflibs" valueType="boolean"/>
+								<option defaultValue="true" id="macosx.c.link.option.shared.1226353026" name="Shared (-dynamiclib)" superClass="macosx.c.link.option.shared" valueType="boolean"/>
+							</tool>
 							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.949766156" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
 								<option id="macosx.cpp.link.option.libs.1565453019" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw3"/>
@@ -28,6 +38,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/target/src}&quot;"/>
 								</option>
 								<option id="macosx.cpp.link.option.flags.143707904" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo" valueType="string"/>
+								<option defaultValue="true" id="macosx.cpp.link.option.shared.1599878744" name="Shared (-dynamiclib)" superClass="macosx.cpp.link.option.shared" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1293583314" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -37,6 +48,8 @@
 								<option id="gnu.both.asm.option.include.paths.1440020636" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glm}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include/darwin}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1980828817" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -45,6 +58,8 @@
 								<option id="gnu.cpp.compiler.option.include.paths.629510813" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glm}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include/darwin}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.132415937" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -52,13 +67,15 @@
 								<option id="gnu.c.compiler.option.include.paths.2086111187" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glm}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include/darwin}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.841907533" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src/cpp"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -71,6 +88,12 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/nostalgia"/>
+		</configuration>
+		<configuration configurationName="OS X">
+			<resource resourceType="PROJECT" workspacePath="/nostalgia"/>
+		</configuration>
+		<configuration configurationName="OSX">
 			<resource resourceType="PROJECT" workspacePath="/nostalgia"/>
 		</configuration>
 	</storageModule>

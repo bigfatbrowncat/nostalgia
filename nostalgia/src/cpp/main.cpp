@@ -16,13 +16,7 @@
 #include <GLFW/glfw3.h>
 
 #include "TimeMeasurer.hpp"
-
-void init();
-void display();
-void reshape(GLFWwindow* window, int w, int h);
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void cursorPositionCallback(GLFWwindow* window, double x, double y);
+#include "main.hpp"
 
 static const int VERTEX_INDEX = 0;
 static const int COLOR_INDEX = 1;
@@ -334,8 +328,10 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 
 }
 
-int main(void)
+int mainLoop(const char* title, int windowWidth, int windowHeight, int pixelsPerPoint)
 {
+	::pixelsPerPoint = pixelsPerPoint;
+
 	if (!glfwInit())
 	{
 		return EXIT_FAILURE;
@@ -348,7 +344,7 @@ int main(void)
 	glfwWindowHint(GLFW_DEPTH_BITS, 16);
 	glfwWindowHint(GLFW_SAMPLES, 3);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Nostalgia", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
 	if (!window)
 	{
 		printf("Error: can't create a window");

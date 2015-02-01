@@ -1,5 +1,5 @@
-#ifndef TIME_MEASURER_H
-#define TIME_MEASURER_H
+#ifndef TIME_MEASURER_HPP_
+#define TIME_MEASURER_HPP_
 
 #include <sys/time.h>
 #include <unistd.h>

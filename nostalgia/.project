@@ -19,11 +19,30 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>JAVA_HOME</name>
+			<type>2</type>
+			<locationURI>JAVA_HOME</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>JAVA_HOME</name>
+			<value>file:/Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home</value>
+		</variable>
+	</variableList>
 </projectDescription>

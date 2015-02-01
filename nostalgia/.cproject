@@ -27,7 +27,7 @@
 								<option id="macosx.cpp.link.option.paths.678225795" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/target/src}&quot;"/>
 								</option>
-								<option id="macosx.cpp.link.option.flags.143707904" superClass="macosx.cpp.link.option.flags" value="-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo" valueType="string"/>
+								<option id="macosx.cpp.link.option.flags.143707904" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1293583314" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

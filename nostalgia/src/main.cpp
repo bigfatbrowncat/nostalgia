@@ -40,7 +40,7 @@ public:
 		gettimeofday(&tv, NULL);
 
 		long end = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-		printf("%s: %ld msec\n", tag, end - start);
+		//printf("%s: %ld msec\n", tag, end - start);
 	}
 };
 
@@ -53,6 +53,49 @@ void cursor_position_callback(GLFWwindow* window, double x, double y);
 
 static const int VERTEX_INDEX = 0;
 static const int COLOR_INDEX = 1;
+static const GLfloat cubeVertexData[] = {
+    -0.5f,-0.5f,-0.5f, // triangle 1 : begin
+    -0.5f,-0.5f, 0.5f,
+    -0.5f, 0.5f, 0.5f, // triangle 1 : end
+    0.5f, 0.5f,-0.5f, // triangle 2 : begin
+    -0.5f,-0.5f,-0.5f,
+    -0.5f, 0.5f,-0.5f, // triangle 2 : end
+
+    0.5f,-0.5f, 0.5f,
+    -0.5f,-0.5f,-0.5f,
+    0.5f,-0.5f,-0.5f,
+    0.5f, 0.5f,-0.5f,
+    0.5f,-0.5f,-0.5f,
+    -0.5f,-0.5f,-0.5f,
+
+    -0.5f,-0.5f,-0.5f,
+    -0.5f, 0.5f, 0.5f,
+    -0.5f, 0.5f,-0.5f,
+    0.5f,-0.5f, 0.5f,
+    -0.5f,-0.5f, 0.5f,
+    -0.5f,-0.5f,-0.5f,
+
+    -0.5f, 0.5f, 0.5f,
+    -0.5f,-0.5f, 0.5f,
+    0.5f,-0.5f, 0.5f,
+    0.5f, 0.5f, 0.5f,
+    0.5f,-0.5f,-0.5f,
+    0.5f, 0.5f,-0.5f,
+
+    0.5f,-0.5f,-0.5f,
+    0.5f, 0.5f, 0.5f,
+    0.5f,-0.5f, 0.5f,
+    0.5f, 0.5f, 0.5f,
+    0.5f, 0.5f,-0.5f,
+    -0.5f, 0.5f,-0.5f,
+
+    0.5f, 0.5f, 0.5f,
+    -0.5f, 0.5f,-0.5f,
+    -0.5f, 0.5f, 0.5f,
+    0.5f, 0.5f, 0.5f,
+    -0.5f, 0.5f, 0.5f,
+    0.5f,-0.5f, 0.5f
+};
 
 using namespace std;
 
@@ -145,8 +188,8 @@ void create_shader_program()
 GLuint vertexArray;
 GLuint vertexBuffer, colorBuffer;
 glm::mat4 proportional;
-int pixelsPerPoint = 10;
-float pointsW = 0, pointsH = 0;
+int pixelsPerPoint = 5;
+int pointsW = 0, pointsH = 0;
 
 void init()
 {
@@ -162,60 +205,18 @@ void init()
 	create_shader_program();
 }
 
-vector<GLfloat> vertices, vertexColors;
+GLfloat* vertexColors = NULL;
+GLfloat* vertices = NULL;
+int verticesCount = 0;
 
 void makeModel()
 {
 	TimeMeasurer tm("makeModel");
-	static const GLfloat cubeVertexData[] = {
-	    -0.5f,-0.5f,-0.5f, // triangle 1 : begin
-	    -0.5f,-0.5f, 0.5f,
-	    -0.5f, 0.5f, 0.5f, // triangle 1 : end
-	    0.5f, 0.5f,-0.5f, // triangle 2 : begin
-	    -0.5f,-0.5f,-0.5f,
-	    -0.5f, 0.5f,-0.5f, // triangle 2 : end
-
-	    0.5f,-0.5f, 0.5f,
-	    -0.5f,-0.5f,-0.5f,
-	    0.5f,-0.5f,-0.5f,
-	    0.5f, 0.5f,-0.5f,
-	    0.5f,-0.5f,-0.5f,
-	    -0.5f,-0.5f,-0.5f,
-
-	    -0.5f,-0.5f,-0.5f,
-	    -0.5f, 0.5f, 0.5f,
-	    -0.5f, 0.5f,-0.5f,
-	    0.5f,-0.5f, 0.5f,
-	    -0.5f,-0.5f, 0.5f,
-	    -0.5f,-0.5f,-0.5f,
-
-	    -0.5f, 0.5f, 0.5f,
-	    -0.5f,-0.5f, 0.5f,
-	    0.5f,-0.5f, 0.5f,
-	    0.5f, 0.5f, 0.5f,
-	    0.5f,-0.5f,-0.5f,
-	    0.5f, 0.5f,-0.5f,
-
-	    0.5f,-0.5f,-0.5f,
-	    0.5f, 0.5f, 0.5f,
-	    0.5f,-0.5f, 0.5f,
-	    0.5f, 0.5f, 0.5f,
-	    0.5f, 0.5f,-0.5f,
-	    -0.5f, 0.5f,-0.5f,
-
-	    0.5f, 0.5f, 0.5f,
-	    -0.5f, 0.5f,-0.5f,
-	    -0.5f, 0.5f, 0.5f,
-	    0.5f, 0.5f, 0.5f,
-	    -0.5f, 0.5f, 0.5f,
-	    0.5f,-0.5f, 0.5f
-	};
 
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 
-	vertexColors.clear();
-	vertices.clear();
-
+	GLfloat* vertexIter = vertices;
+	GLfloat* vertexColorIter = vertexColors;
 	for (int i = 0; i < pointsW; i++)
 	{
 		for (int j = 0; j < pointsH; j++)
@@ -227,21 +228,20 @@ void makeModel()
 			glm::mat4 trans = glm::translate(glm::vec3(-pointsW / 2 + i + 0.5f, pointsH / 2 - j - 0.5f, 0.0f));
 
 			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, proportional * trans);
-			vertices.insert(vertices.end(), pixelGeometry, pixelGeometry + cubeVertexDataLength);
+			memcpy(vertexIter, pixelGeometry, cubeVertexDataLength * sizeof(GLfloat));
+			vertexIter += cubeVertexDataLength;
 
 			// Colors
-			GLfloat pixelColor[cubeVertexDataLength];
-			GLfloat* iter = pixelColor;
+			//GLfloat pixelColor[cubeVertexDataLength];
 			float r = (float)rand() / RAND_MAX;
 			float g = (float)rand() / RAND_MAX;
 			float b = (float)rand() / RAND_MAX;
 			for (int k = 0; k < cubeVertexDataLength / 3; k++)
 			{
-				*iter++ = r;
-				*iter++ = g;
-				*iter++ = b;
+				*vertexColorIter++ = r;
+				*vertexColorIter++ = g;
+				*vertexColorIter++ = b;
 			}
-			vertexColors.insert(vertexColors.end(), pixelColor, iter);
 		}
 	}
 	tm.count();
@@ -250,13 +250,13 @@ void makeModel()
 void display()
 {
 	TimeMeasurer tm("display");
-	assert(vertices.size() == vertexColors.size());
+	//assert(vertices.size() == vertexColors.size());
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertexColors.size() * sizeof(GLfloat), &vertexColors[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexColors[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(VERTEX_INDEX);
 	glEnableVertexAttribArray(COLOR_INDEX);
@@ -287,7 +287,7 @@ void display()
 
 	glUseProgram(shaderProgram);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, verticesCount);
 
 	glDisableVertexAttribArray(VERTEX_INDEX);
 	glDisableVertexAttribArray(COLOR_INDEX);
@@ -299,6 +299,18 @@ void reshape(GLFWwindow* window, int w, int h)
 	proportional = glm::scale(glm::vec3((float)pixelsPerPoint / w, (float)pixelsPerPoint / h, 1.0f));
 	pointsW = (float)w * 2 / pixelsPerPoint;
 	pointsH = (float)h * 2 / pixelsPerPoint;
+	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
+	if (vertices != NULL)
+	{
+		delete [] vertices;
+	}
+	if (vertexColors != NULL)
+	{
+		delete [] vertexColors;
+	}
+	verticesCount = cubeVertexDataLength * pointsW * pointsH;
+	vertices = new GLfloat[verticesCount];
+	vertexColors = new GLfloat[verticesCount];
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

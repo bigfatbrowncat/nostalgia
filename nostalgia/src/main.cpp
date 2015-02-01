@@ -11,48 +11,33 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-#include <sys/time.h>
-#include <unistd.h>
-
-#define GLFW_INCLUDE_GLU
+//#define GLFW_INCLUDE_GLU
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
-class TimeMeasurer
-{
-private:
-	long start;
-	char* tag;
-public:
-	TimeMeasurer(char* tag)
-	{
-		this->tag = tag;
-
-		struct timeval  tv;
-		gettimeofday(&tv, NULL);
-
-		start = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-	}
-
-	void count()
-	{
-		struct timeval  tv;
-		gettimeofday(&tv, NULL);
-
-		long end = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-		//printf("%s: %ld msec\n", tag, end - start);
-	}
-};
+#include "TimeMeasurer.hpp"
 
 void init();
 void display();
 void reshape(GLFWwindow* window, int w, int h);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-void cursor_position_callback(GLFWwindow* window, double x, double y);
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void cursorPositionCallback(GLFWwindow* window, double x, double y);
 
 static const int VERTEX_INDEX = 0;
 static const int COLOR_INDEX = 1;
+
+/*
+static const GLfloat squareVertexData[] = {
+	0.5f, 0.5f,0.0f, // triangle 2 : begin
+	-0.5f,-0.5f,0.0f,
+	-0.5f, 0.5f,0.0f, // triangle 2 : end
+	0.5f, 0.5f,0.0f,
+	0.5f,-0.5f,0.0f,
+	-0.5f,-0.5f,0.0f,
+};
+*/
+
 static const GLfloat cubeVertexData[] = {
     -0.5f,-0.5f,-0.5f, // triangle 1 : begin
     -0.5f,-0.5f, 0.5f,
@@ -99,19 +84,16 @@ static const GLfloat cubeVertexData[] = {
 
 using namespace std;
 
-void applyMatrix(GLfloat vertices[], size_t verticesCount, const glm::mat4& mat)
-{
-	for (size_t i = 0; i < verticesCount; i++)
-	{
-		glm::vec4 v(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2], 1.0f);
-		v = mat * v;
-		vertices[i * 3] = v.x;
-		vertices[i * 3 + 1] = v.y;
-		vertices[i * 3 + 2] = v.z;
-	}
-}
-
 GLuint shaderProgram;
+GLuint vertexArray;
+GLuint vertexBuffer, colorBuffer;
+glm::mat4 proportional;
+int pixelsPerPoint = 5;
+int pointsWidthCount = 0, pointsHeightCount = 0;
+
+GLfloat* vertexData = NULL;
+GLfloat* vertexColorData = NULL;
+int verticesCount = 0;
 
 void create_shader_program()
 {
@@ -161,9 +143,9 @@ void create_shader_program()
     // Check Fragment Shader
     glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &result);
     glGetShaderiv(fragmentShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
-    std::vector<char> FragmentShaderErrorMessage(infoLogLength);
-    glGetShaderInfoLog(fragmentShaderID, infoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-    fprintf(stdout, "%s\n", &FragmentShaderErrorMessage[0]);
+    std::vector<char> fragmentShaderErrorMessage(infoLogLength);
+    glGetShaderInfoLog(fragmentShaderID, infoLogLength, NULL, &fragmentShaderErrorMessage[0]);
+    fprintf(stdout, "%s\n", &fragmentShaderErrorMessage[0]);
 
     // Link the program
     fprintf(stdout, "Linking shader program...\n");
@@ -175,21 +157,15 @@ void create_shader_program()
     // Check the program
     glGetProgramiv(programID, GL_LINK_STATUS, &result);
     glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
-    std::vector<char> ProgramErrorMessage(std::max(infoLogLength, int(1)));
-    glGetProgramInfoLog(programID, infoLogLength, NULL, &ProgramErrorMessage[0]);
-    fprintf(stdout, "%s\n", &ProgramErrorMessage[0]);
+    std::vector<char> programErrorMessage(std::max(infoLogLength, int(1)));
+    glGetProgramInfoLog(programID, infoLogLength, NULL, &programErrorMessage[0]);
+    fprintf(stdout, "%s\n", &programErrorMessage[0]);
 
     glDeleteShader(vertexShaderID);
     glDeleteShader(fragmentShaderID);
 
     shaderProgram = programID;
 }
-
-GLuint vertexArray;
-GLuint vertexBuffer, colorBuffer;
-glm::mat4 proportional;
-int pixelsPerPoint = 5;
-int pointsW = 0, pointsH = 0;
 
 void init()
 {
@@ -205,9 +181,17 @@ void init()
 	create_shader_program();
 }
 
-GLfloat* vertexColors = NULL;
-GLfloat* vertices = NULL;
-int verticesCount = 0;
+void applyMatrix(GLfloat vertices[], size_t verticesCount, const glm::mat4& mat)
+{
+	for (size_t i = 0; i < verticesCount; i++)
+	{
+		glm::vec4 v(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2], 1.0f);
+		v = mat * v;
+		vertices[i * 3] = v.x;
+		vertices[i * 3 + 1] = v.y;
+		vertices[i * 3 + 2] = v.z;
+	}
+}
 
 void makeModel()
 {
@@ -215,17 +199,17 @@ void makeModel()
 
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 
-	GLfloat* vertexIter = vertices;
-	GLfloat* vertexColorIter = vertexColors;
-	for (int i = 0; i < pointsW; i++)
+	GLfloat* vertexIter = vertexData;
+	GLfloat* vertexColorIter = vertexColorData;
+	for (int i = 0; i < pointsWidthCount; i++)
 	{
-		for (int j = 0; j < pointsH; j++)
+		for (int j = 0; j < pointsHeightCount; j++)
 		{
 			// Geometry
 			GLfloat pixelGeometry[cubeVertexDataLength];
 			memcpy(pixelGeometry, cubeVertexData, cubeVertexDataLength * sizeof(GLfloat));
 
-			glm::mat4 trans = glm::translate(glm::vec3(-pointsW / 2 + i + 0.5f, pointsH / 2 - j - 0.5f, 0.0f));
+			glm::mat4 trans = glm::translate(glm::vec3(-pointsWidthCount / 2 + i + 0.5f, pointsHeightCount / 2 - j - 0.5f, 0.0f));
 
 			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, proportional * trans);
 			memcpy(vertexIter, pixelGeometry, cubeVertexDataLength * sizeof(GLfloat));
@@ -244,7 +228,7 @@ void makeModel()
 			}
 		}
 	}
-	tm.count();
+	tm.measureAndReport();
 }
 
 void display()
@@ -253,10 +237,10 @@ void display()
 	//assert(vertices.size() == vertexColors.size());
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexData[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexColors[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexColorData[0], GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(VERTEX_INDEX);
 	glEnableVertexAttribArray(COLOR_INDEX);
@@ -291,29 +275,36 @@ void display()
 
 	glDisableVertexAttribArray(VERTEX_INDEX);
 	glDisableVertexAttribArray(COLOR_INDEX);
-	tm.count();
+	tm.measureAndReport();
 }
 
 void reshape(GLFWwindow* window, int w, int h)
 {
 	proportional = glm::scale(glm::vec3((float)pixelsPerPoint / w, (float)pixelsPerPoint / h, 1.0f));
-	pointsW = (float)w * 2 / pixelsPerPoint;
-	pointsH = (float)h * 2 / pixelsPerPoint;
+	pointsWidthCount = (float)w * 2 / pixelsPerPoint;
+	pointsHeightCount = (float)h * 2 / pixelsPerPoint;
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
-	if (vertices != NULL)
+	if (vertexData != NULL)
 	{
-		delete [] vertices;
+		delete [] vertexData;
 	}
-	if (vertexColors != NULL)
+	if (vertexColorData != NULL)
 	{
-		delete [] vertexColors;
+		delete [] vertexColorData;
 	}
-	verticesCount = cubeVertexDataLength * pointsW * pointsH;
-	vertices = new GLfloat[verticesCount];
-	vertexColors = new GLfloat[verticesCount];
+	verticesCount = cubeVertexDataLength * pointsWidthCount * pointsHeightCount;
+	vertexData = new GLfloat[verticesCount];
+	vertexColorData = new GLfloat[verticesCount];
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void cleanup()
+{
+	glDeleteBuffers(1, &vertexBuffer);
+	glDeleteVertexArrays(1, &vertexArray);
+	glDeleteProgram(shaderProgram);
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
@@ -321,7 +312,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button != GLFW_MOUSE_BUTTON_LEFT)
 	{
@@ -338,16 +329,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	}
 }
 
-void cursor_position_callback(GLFWwindow* window, double x, double y)
+void cursorPositionCallback(GLFWwindow* window, double x, double y)
 {
 
-}
-
-void cleanup()
-{
-	glDeleteBuffers(1, &vertexBuffer);
-	glDeleteVertexArrays(1, &vertexArray);
-	glDeleteProgram(shaderProgram);
 }
 
 int main(void)
@@ -375,9 +359,9 @@ int main(void)
 	printf("shader lang: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 	glfwSetFramebufferSizeCallback(window, reshape);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
-	glfwSetCursorPosCallback(window, cursor_position_callback);
+	glfwSetKeyCallback(window, keyCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	glfwSetCursorPosCallback(window, cursorPositionCallback);
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
@@ -410,7 +394,7 @@ int main(void)
 		{
 			finish = true;
 		}
-		tm.count();
+		tm.measureAndReport();
 	}
 	cleanup();
 

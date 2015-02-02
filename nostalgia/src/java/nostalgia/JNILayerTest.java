@@ -19,10 +19,6 @@ public class JNILayerTest {
 				
 				for (int i = 0; i < pointsWidthCount; i++) {
 					for (int j = 0; j < pointsHeightCount; j++) {
-						/*r[j * pointsWidthCount + i] = (float)i / pointsWidthCount;
-						g[j * pointsWidthCount + i] = (float)j / pointsHeightCount;
-						b[j * pointsWidthCount + i] = 0.5f;*/
-						
 						r[j * pointsWidthCount + i] = random.nextFloat();
 						g[j * pointsWidthCount + i] = random.nextFloat();
 						b[j * pointsWidthCount + i] = random.nextFloat();

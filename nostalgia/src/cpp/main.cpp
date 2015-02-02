@@ -20,8 +20,8 @@
 static const int VERTEX_INDEX = 0;
 static const int COLOR_INDEX = 1;
 
-/*
-static const GLfloat squareVertexData[] = {
+
+static const GLfloat cubeVertexData[] = {
 	0.5f, 0.5f,0.0f, // triangle 2 : begin
 	-0.5f,-0.5f,0.0f,
 	-0.5f, 0.5f,0.0f, // triangle 2 : end
@@ -29,8 +29,8 @@ static const GLfloat squareVertexData[] = {
 	0.5f,-0.5f,0.0f,
 	-0.5f,-0.5f,0.0f,
 };
-*/
 
+/*
 static const GLfloat cubeVertexData[] = {
     -0.5f,-0.5f,-0.5f, // triangle 1 : begin
     -0.5f,-0.5f, 0.5f,
@@ -73,7 +73,7 @@ static const GLfloat cubeVertexData[] = {
     0.5f, 0.5f, 0.5f,
     -0.5f, 0.5f, 0.5f,
     0.5f,-0.5f, 0.5f
-};
+};*/
 
 using namespace std;
 
@@ -126,7 +126,7 @@ void create_shader_program()
     glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &result);
     glGetShaderiv(vertexShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
     std::vector<char> vertexShaderErrorMessage(infoLogLength);
-    glGetShaderInfoLog(vertexShaderID, infoLogLength, NULL, &vertexShaderErrorMessage[0]);
+    glGetShaderInfoLog(vertexShaderID, infoLogLength, NULL, (GLchar*)&vertexShaderErrorMessage[0]);
     if (vertexShaderErrorMessage.size() > 0)
     {
     	cout << &vertexShaderErrorMessage[0] << std::endl;
@@ -142,7 +142,7 @@ void create_shader_program()
     glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &result);
     glGetShaderiv(fragmentShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
     std::vector<char> fragmentShaderErrorMessage(infoLogLength);
-    glGetShaderInfoLog(fragmentShaderID, infoLogLength, NULL, &fragmentShaderErrorMessage[0]);
+    glGetShaderInfoLog(fragmentShaderID, infoLogLength, NULL, (GLchar*)&fragmentShaderErrorMessage[0]);
     if (fragmentShaderErrorMessage.size() > 0)
     {
     	cout << &fragmentShaderErrorMessage[0] << std::endl;
@@ -159,7 +159,7 @@ void create_shader_program()
     glGetProgramiv(programID, GL_LINK_STATUS, &result);
     glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
     std::vector<char> programErrorMessage(std::max(infoLogLength, int(1)));
-    glGetProgramInfoLog(programID, infoLogLength, NULL, &programErrorMessage[0]);
+    glGetProgramInfoLog(programID, infoLogLength, NULL, (GLchar*)&programErrorMessage[0]);
     if (fragmentShaderErrorMessage.size() > 0)
     {
     	cout << &programErrorMessage[0] << std::endl;
@@ -286,8 +286,12 @@ void* custom;
 void reshape(GLFWwindow* window, int w, int h)
 {
 	proportional = glm::scale(glm::vec3((float)pixelsPerPoint / w, (float)pixelsPerPoint / h, 1.0f));
-	pointsWidthCount = (int)((float)w * 2 / pixelsPerPoint);
-	pointsHeightCount = (int)((float)h * 2 / pixelsPerPoint);
+
+	int w_smaller = w / pixelsPerPoint * pixelsPerPoint;
+	int h_smaller = h / pixelsPerPoint * pixelsPerPoint;
+
+	pointsWidthCount = (int)((float)w_smaller * 2 / pixelsPerPoint) + 2;
+	pointsHeightCount = (int)((float)h_smaller * 2 / pixelsPerPoint) + 2;
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 	if (vertexData != NULL)
 	{

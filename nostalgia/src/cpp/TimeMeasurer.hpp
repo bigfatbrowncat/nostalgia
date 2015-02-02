@@ -31,7 +31,7 @@ public:
 		gettimeofday(&tv, NULL);
 
 		long end = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-		printf("%s: %ld msec\n", tag.c_str(), end - start);
+		std::cout << tag << ": " << (end - start) << std::endl;
 #endif
 	}
 };

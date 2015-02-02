@@ -221,10 +221,6 @@ void makeModel(float r[], float g[], float b[])
 			vertexIter += cubeVertexDataLength;
 
 			// Colors
-			//GLfloat pixelColor[cubeVertexDataLength];
-			/*float r = (float)rand() / RAND_MAX;
-			float g = (float)rand() / RAND_MAX;
-			float b = (float)rand() / RAND_MAX;*/
 			for (int k = 0; k < cubeVertexDataLength / 3; k++)
 			{
 				*vertexColorIter++ = *rIter;
@@ -284,11 +280,14 @@ void display()
 	tm.measureAndReport();
 }
 
+resize_handler* resizeHandler;
+void* custom;
+
 void reshape(GLFWwindow* window, int w, int h)
 {
 	proportional = glm::scale(glm::vec3((float)pixelsPerPoint / w, (float)pixelsPerPoint / h, 1.0f));
-	pointsWidthCount = (float)w * 2 / pixelsPerPoint;
-	pointsHeightCount = (float)h * 2 / pixelsPerPoint;
+	pointsWidthCount = (int)((float)w * 2 / pixelsPerPoint);
+	pointsHeightCount = (int)((float)h * 2 / pixelsPerPoint);
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 	if (vertexData != NULL)
 	{
@@ -309,6 +308,7 @@ void reshape(GLFWwindow* window, int w, int h)
 	g = new float[pointsWidthCount * pointsHeightCount];
 	b = new float[pointsWidthCount * pointsHeightCount];
 
+	(*resizeHandler)(pointsWidthCount, pointsHeightCount, custom);
 }
 
 void cleanup()
@@ -348,9 +348,13 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 
 }
 
-int mainLoop(const char* title, int windowWidth, int windowHeight, int pixelsPerPoint)
+int mainLoop(const char* title,
+             int windowWidth, int windowHeight, int pixelsPerPoint,
+             frame_handler* frameHandler, resize_handler* resizeHandler, void* custom)
 {
 	::pixelsPerPoint = pixelsPerPoint;
+	::custom = custom;
+	::resizeHandler = resizeHandler;
 
 	if (!glfwInit())
 	{
@@ -390,31 +394,32 @@ int mainLoop(const char* title, int windowWidth, int windowHeight, int pixelsPer
 	reshape(window, width, height);
 	init();
 
-	double t, t_old, dt;
+	double t, tOld = 0, dt;
 	bool finish = false;
 
 	while (!finish)
 	{
 		TimeMeasurer tm("loop");
 		t = glfwGetTime();
-		dt = t - t_old;
-		t_old = t;
+		dt = t - tOld;
+		tOld = t;
 
-		for (int i = 0; i < pointsWidthCount; i++)
+
 		{
-			for (int j = 0; j < pointsHeightCount; j++)
-			{
-				r[j * pointsWidthCount + i] = (float)i / pointsWidthCount;
-				g[j * pointsWidthCount + i] = (float)j / pointsHeightCount;
-				b[j * pointsWidthCount + i] = 0.5f;
-			}
+			TimeMeasurer tm("JNI callback");
+			(*frameHandler)(r, g, b, custom);
+			makeModel(r, g, b);
+			tm.measureAndReport();
 		}
-		makeModel(r, g, b);
 
 		display();
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		{
+			TimeMeasurer tm("draw");
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+			tm.measureAndReport();
+		}
 
 		if (glfwWindowShouldClose(window))
 		{

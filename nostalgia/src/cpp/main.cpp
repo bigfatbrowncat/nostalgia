@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -89,6 +88,8 @@ GLfloat* vertexData = NULL;
 GLfloat* vertexColorData = NULL;
 int verticesCount = 0;
 
+float *r = NULL, *g = NULL, *b = NULL;
+
 void create_shader_program()
 {
 	stringstream ss;
@@ -116,7 +117,7 @@ void create_shader_program()
     int infoLogLength;
 
     // Compile Vertex Shader
-    printf("Compiling vertex shader...\n");
+    cout << "Compiling vertex shader..." << std::endl;
     GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShaderID, 1, &vertexSource, NULL);
     glCompileShader(vertexShaderID);
@@ -126,10 +127,13 @@ void create_shader_program()
     glGetShaderiv(vertexShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
     std::vector<char> vertexShaderErrorMessage(infoLogLength);
     glGetShaderInfoLog(vertexShaderID, infoLogLength, NULL, &vertexShaderErrorMessage[0]);
-    fprintf(stdout, "%s\n", &vertexShaderErrorMessage[0]);
+    if (vertexShaderErrorMessage.size() > 0)
+    {
+    	cout << &vertexShaderErrorMessage[0] << std::endl;
+    }
 
     // Compile Fragment Shader
-    printf("Compiling fragment shader...\n");
+    cout << "Compiling fragment shader..." << std::endl;
     GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShaderID, 1, &fragmentSourcePointer , NULL);
     glCompileShader(fragmentShaderID);
@@ -139,10 +143,13 @@ void create_shader_program()
     glGetShaderiv(fragmentShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
     std::vector<char> fragmentShaderErrorMessage(infoLogLength);
     glGetShaderInfoLog(fragmentShaderID, infoLogLength, NULL, &fragmentShaderErrorMessage[0]);
-    fprintf(stdout, "%s\n", &fragmentShaderErrorMessage[0]);
+    if (fragmentShaderErrorMessage.size() > 0)
+    {
+    	cout << &fragmentShaderErrorMessage[0] << std::endl;
+    }
 
     // Link the program
-    fprintf(stdout, "Linking shader program...\n");
+    cout << "Linking shader program..." << std::endl;
     GLuint programID = glCreateProgram();
     glAttachShader(programID, vertexShaderID);
     glAttachShader(programID, fragmentShaderID);
@@ -153,7 +160,10 @@ void create_shader_program()
     glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
     std::vector<char> programErrorMessage(std::max(infoLogLength, int(1)));
     glGetProgramInfoLog(programID, infoLogLength, NULL, &programErrorMessage[0]);
-    fprintf(stdout, "%s\n", &programErrorMessage[0]);
+    if (fragmentShaderErrorMessage.size() > 0)
+    {
+    	cout << &programErrorMessage[0] << std::endl;
+	}
 
     glDeleteShader(vertexShaderID);
     glDeleteShader(fragmentShaderID);
@@ -187,7 +197,7 @@ void applyMatrix(GLfloat vertices[], size_t verticesCount, const glm::mat4& mat)
 	}
 }
 
-void makeModel()
+void makeModel(float r[], float g[], float b[])
 {
 	TimeMeasurer tm("makeModel");
 
@@ -195,9 +205,10 @@ void makeModel()
 
 	GLfloat* vertexIter = vertexData;
 	GLfloat* vertexColorIter = vertexColorData;
-	for (int i = 0; i < pointsWidthCount; i++)
+	float *rIter = r, *gIter = g, *bIter = b;
+	for (int j = 0; j < pointsHeightCount; j++)
 	{
-		for (int j = 0; j < pointsHeightCount; j++)
+		for (int i = 0; i < pointsWidthCount; i++)
 		{
 			// Geometry
 			GLfloat pixelGeometry[cubeVertexDataLength];
@@ -211,15 +222,16 @@ void makeModel()
 
 			// Colors
 			//GLfloat pixelColor[cubeVertexDataLength];
-			float r = (float)rand() / RAND_MAX;
+			/*float r = (float)rand() / RAND_MAX;
 			float g = (float)rand() / RAND_MAX;
-			float b = (float)rand() / RAND_MAX;
+			float b = (float)rand() / RAND_MAX;*/
 			for (int k = 0; k < cubeVertexDataLength / 3; k++)
 			{
-				*vertexColorIter++ = r;
-				*vertexColorIter++ = g;
-				*vertexColorIter++ = b;
+				*vertexColorIter++ = *rIter;
+				*vertexColorIter++ = *gIter;
+				*vertexColorIter++ = *bIter;
 			}
+			rIter++; gIter++; bIter++;
 		}
 	}
 	tm.measureAndReport();
@@ -289,6 +301,14 @@ void reshape(GLFWwindow* window, int w, int h)
 	verticesCount = cubeVertexDataLength * pointsWidthCount * pointsHeightCount;
 	vertexData = new GLfloat[verticesCount];
 	vertexColorData = new GLfloat[verticesCount];
+
+	if (r != NULL) { delete [] r; }
+	if (g != NULL) { delete [] g; }
+	if (b != NULL) { delete [] b; }
+	r = new float[pointsWidthCount * pointsHeightCount];
+	g = new float[pointsWidthCount * pointsHeightCount];
+	b = new float[pointsWidthCount * pointsHeightCount];
+
 }
 
 void cleanup()
@@ -347,12 +367,12 @@ int mainLoop(const char* title, int windowWidth, int windowHeight, int pixelsPer
 	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
 	if (!window)
 	{
-		printf("Error: can't create a window");
+		cout << "Error: can't create a window" << std::endl;
 		glfwTerminate();
 		return EXIT_FAILURE;
 	}
 
-	printf("shader lang: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
 	glfwSetFramebufferSizeCallback(window, reshape);
 	glfwSetKeyCallback(window, keyCallback);
@@ -380,7 +400,17 @@ int mainLoop(const char* title, int windowWidth, int windowHeight, int pixelsPer
 		dt = t - t_old;
 		t_old = t;
 
-		makeModel();
+		for (int i = 0; i < pointsWidthCount; i++)
+		{
+			for (int j = 0; j < pointsHeightCount; j++)
+			{
+				r[j * pointsWidthCount + i] = (float)i / pointsWidthCount;
+				g[j * pointsWidthCount + i] = (float)j / pointsHeightCount;
+				b[j * pointsWidthCount + i] = 0.5f;
+			}
+		}
+		makeModel(r, g, b);
+
 		display();
 
 		glfwSwapBuffers(window);

@@ -9,6 +9,7 @@ public final class JNILayer {
 	 * <p>This class is used for handling events of the framework main event loop.</p>
 	 * <p>You should subclass it, create an instance (you can do it inline) and pass this
 	 * instance to {@link JNILayer#mainLoop JNILayer.mainLoop()}</p>
+	 * @see {@link JNILayer#mainLoop JNILayer.mainLoop()}
 	 */
 	public abstract static class Handler {
 		/**
@@ -42,13 +43,24 @@ public final class JNILayer {
 		 * method to prepare the new screen contents.</p>
 		 */
 		public abstract void frame();
+
 		/**
 		 * <p>This method is called by the framework each time when the
-		 * screen size is changed and could be implemented by user.</p>
-		 * <p>Use {@link #getPointsWidthCount()} and {@link #getPointsHeightCount()} 
+		 * screen size is changed and could be implemented in subclass.</p>
+		 * <p>Use {@link #getPointsWidthCount()} and {@link #getPointsHeightCount()} to
+		 * determine the current virtual screen size</p>
 		 */
 		public void sizeChanged() { }
 
+		/**
+		 * <p>This method is called by the framework each time when the user
+		 * moves the mouse while the application window is active.</p>
+		 * <p>Use {@link #getPointsWidthCount()} and {@link #getPointsHeightCount()} 
+		 * @param xPts x mouse coordinate in virtual points from the left size of
+		 * the screen
+		 * @param yPts y mouse coordinate in virtual points from the top side of
+		 * the screen
+		 */
 		public void mouseMove(double xPts, double yPts) { }
 		
 		/**
@@ -103,39 +115,18 @@ public final class JNILayer {
 	 * <h1>Usage example:</h3>
 	 * <p>This code demonstrates the usage of {@link #mainLoop} function. It shows random color noise
 	 * every frame</p>  
-	 * <pre>
-public static void main(String[] args) {
-	int res = JNILayer.mainLoop("JNILayer Demo", 800, 600, 4, new FrameHandler() {
-			
-		private Random random = new Random();
-			
-		public void frame() {
-			int pointsWidthCount = getPointsWidthCount();
-			int pointsHeightCount = getPointsHeightCount();
-			float[] r = getR();
-			float[] g = getG();
-			float[] b = getB();
-				
-			for (int i = 0; i < pointsWidthCount; i++) {
-				for (int j = 0; j < pointsHeightCount; j++) {
-					r[j * pointsWidthCount + i] = random.nextFloat();
-					g[j * pointsWidthCount + i] = random.nextFloat();
-					b[j * pointsWidthCount + i] = random.nextFloat();
-				}
-			}
-		}
-	});
-}
-	 * </pre>
 	 * 
 	 * @param title The main window title 
 	 * @param windowWidth Initial width of the window in real pixels
 	 * @param windowHeight Initial height of the window in real pixels
 	 * @param pixelsPerPoint The size of a point in pixels (4, for example)
 	 * @param frameHandler A user-made subclass of the {@link Handler} object
-	 * @return the exit code. If everything's fine it's zero.
-	 * 
-	 * 
+	 * @return <code>true</code> if the loop finished successfully, <code>false</code> otherwise. 
 	 */
-	static native int mainLoop(String title, int windowWidth, int windowHeight, int pixelsPerPoint, Handler frameHandler);
+	static native boolean mainLoop(Handler frameHandler);
+	
+	static native boolean createWindow(String title, int windowWidth, int windowHeight, int pixelsPerPoint); 
+	
+	static native void setCursorVisibility(boolean visible);
+
 }

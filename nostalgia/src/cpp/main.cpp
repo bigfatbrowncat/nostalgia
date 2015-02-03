@@ -88,12 +88,14 @@ int windowWidth, windowHeight;
 GLfloat* vertexData = NULL;
 GLfloat* vertexColorData = NULL;
 int verticesCount = 0;
+float *r = NULL, *g = NULL, *b = NULL;
 
 resize_handler* resizeHandler;
 mouse_move_handler* mouseMoveHandler;
 void* custom;
 
-float *r = NULL, *g = NULL, *b = NULL;
+GLFWwindow* window;
+
 
 void create_shader_program()
 {
@@ -295,8 +297,8 @@ void reshape(GLFWwindow* window, int w, int h)
 	int w_smaller = (w / pixelsPerPoint) * pixelsPerPoint;
 	int h_smaller = (h / pixelsPerPoint) * pixelsPerPoint;
 
-	pointsWidthCount = (int)((float)w_smaller / pixelsPerPoint);
-	pointsHeightCount = (int)((float)h_smaller / pixelsPerPoint);
+	pointsWidthCount = (int)((float)w_smaller / pixelsPerPoint) + 2;
+	pointsHeightCount = (int)((float)h_smaller / pixelsPerPoint) + 2;
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 	if (vertexData != NULL)
 	{
@@ -363,18 +365,25 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 	(*mouseMoveHandler)(xpts, ypts, custom);
 }
 
-int mainLoop(const char* title,
-             int windowWidth, int windowHeight, int pixelsPerPoint,
-             frame_handler* frameHandler, resize_handler* resizeHandler, mouse_move_handler* mouseMoveHandler, void* custom)
+void setCursorVisibility(bool visible)
+{
+	if (visible)
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+	else
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	}
+}
+
+bool createWindow(const char* title, int windowWidth, int windowHeight, int pixelsPerPoint)
 {
 	::pixelsPerPoint = pixelsPerPoint;
-	::custom = custom;
-	::resizeHandler = resizeHandler;
-	::mouseMoveHandler = mouseMoveHandler;
 
 	if (!glfwInit())
 	{
-		return EXIT_FAILURE;
+		return false;
 	}
 
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -384,12 +393,12 @@ int mainLoop(const char* title,
 	glfwWindowHint(GLFW_DEPTH_BITS, 16);
 	glfwWindowHint(GLFW_SAMPLES, 3);
 
-	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
+	window = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
 	if (!window)
 	{
 		cout << "Error: can't create a window" << std::endl;
 		glfwTerminate();
-		return EXIT_FAILURE;
+		return false;
 	}
 
 	cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
@@ -401,6 +410,15 @@ int mainLoop(const char* title,
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
+
+	return true;
+}
+
+bool mainLoop(frame_handler* frameHandler, resize_handler* resizeHandler, mouse_move_handler* mouseMoveHandler, void* custom)
+{
+	::custom = custom;
+	::resizeHandler = resizeHandler;
+	::mouseMoveHandler = mouseMoveHandler;
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
@@ -447,6 +465,6 @@ int mainLoop(const char* title,
 
 
 	glfwTerminate();
-	return EXIT_SUCCESS;
+	return true;
 }
 

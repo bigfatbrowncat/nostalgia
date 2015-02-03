@@ -124,17 +124,23 @@ extern "C"
 	}
 
 
-	JNIEXPORT jint JNICALL Java_nostalgia_JNILayer_mainLoop(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint, jobject handler)
+	JNIEXPORT jboolean JNICALL Java_nostalgia_JNILayer_mainLoop(JNIEnv* env, jclass clz, jobject handler)
+	{
+		handlerJNICustom custom(env, handler);
+		return mainLoop(&frame_handler_callback, &resize_handler_callback, &mouse_move_handler_callback, &custom);
+	}
+
+	JNIEXPORT jboolean JNICALL Java_nostalgia_JNILayer_createWindow(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint)
 	{
 		const char* titleChars = env->GetStringUTFChars(title, NULL);
-
-		handlerJNICustom custom(env, handler);
-
-		int res = mainLoop(titleChars, windowWidth, windowHeight, pixelsPerPoint,
-		                   &frame_handler_callback, &resize_handler_callback, &mouse_move_handler_callback, &custom);
-
+		bool res = createWindow(titleChars, windowWidth, windowHeight, pixelsPerPoint);
 		env->ReleaseStringUTFChars(title, titleChars);
-
 		return res;
+	}
+
+
+	JNIEXPORT void JNICALL Java_nostalgia_JNILayer_setCursorVisibility(JNIEnv* env, jclass clz, jboolean visible)
+	{
+		setCursorVisibility(visible);
 	}
 }

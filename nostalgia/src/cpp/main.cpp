@@ -83,10 +83,15 @@ GLuint vertexBuffer, colorBuffer;
 glm::mat4 proportional;
 int pixelsPerPoint = 5;
 int pointsWidthCount = 0, pointsHeightCount = 0;
+int windowWidth, windowHeight;
 
 GLfloat* vertexData = NULL;
 GLfloat* vertexColorData = NULL;
 int verticesCount = 0;
+
+resize_handler* resizeHandler;
+mouse_move_handler* mouseMoveHandler;
+void* custom;
 
 float *r = NULL, *g = NULL, *b = NULL;
 
@@ -214,7 +219,7 @@ void makeModel(float r[], float g[], float b[])
 			GLfloat pixelGeometry[cubeVertexDataLength];
 			memcpy(pixelGeometry, cubeVertexData, cubeVertexDataLength * sizeof(GLfloat));
 
-			glm::mat4 trans = glm::translate(glm::vec3(-pointsWidthCount / 2 + i + 0.5f, pointsHeightCount / 2 - j - 0.5f, 0.0f));
+			glm::mat4 trans = glm::translate(glm::vec3(-(float)pointsWidthCount / 2 + i + 0.5f, (float)pointsHeightCount / 2 - j - 0.5f, 0.0f));
 
 			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, proportional * trans);
 			memcpy(vertexIter, pixelGeometry, cubeVertexDataLength * sizeof(GLfloat));
@@ -280,18 +285,18 @@ void display()
 	tm.measureAndReport();
 }
 
-resize_handler* resizeHandler;
-void* custom;
-
 void reshape(GLFWwindow* window, int w, int h)
 {
-	proportional = glm::scale(glm::vec3((float)pixelsPerPoint / w, (float)pixelsPerPoint / h, 1.0f));
+	windowWidth = w;
+	windowHeight = h;
 
-	int w_smaller = w / pixelsPerPoint * pixelsPerPoint;
-	int h_smaller = h / pixelsPerPoint * pixelsPerPoint;
+	proportional = glm::scale(glm::vec3(2.0f * pixelsPerPoint / w, 2.0f * pixelsPerPoint / h, 1.0f));
 
-	pointsWidthCount = (int)((float)w_smaller * 2 / pixelsPerPoint) + 2;
-	pointsHeightCount = (int)((float)h_smaller * 2 / pixelsPerPoint) + 2;
+	int w_smaller = (w / pixelsPerPoint) * pixelsPerPoint;
+	int h_smaller = (h / pixelsPerPoint) * pixelsPerPoint;
+
+	pointsWidthCount = (int)((float)w_smaller / pixelsPerPoint);
+	pointsHeightCount = (int)((float)h_smaller / pixelsPerPoint);
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 	if (vertexData != NULL)
 	{
@@ -349,16 +354,23 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 
 void cursorPositionCallback(GLFWwindow* window, double x, double y)
 {
+	double xc = (double)windowWidth / 2, yc = (double)windowHeight / 2;
+	double xl = xc - pointsWidthCount * pixelsPerPoint / 2,
+	       yt = yc - pointsHeightCount * pixelsPerPoint / 2;
+	double xpts = (x - xl) / pixelsPerPoint,
+	       ypts = (y - yt) / pixelsPerPoint;
 
+	(*mouseMoveHandler)(xpts, ypts, custom);
 }
 
 int mainLoop(const char* title,
              int windowWidth, int windowHeight, int pixelsPerPoint,
-             frame_handler* frameHandler, resize_handler* resizeHandler, void* custom)
+             frame_handler* frameHandler, resize_handler* resizeHandler, mouse_move_handler* mouseMoveHandler, void* custom)
 {
 	::pixelsPerPoint = pixelsPerPoint;
 	::custom = custom;
 	::resizeHandler = resizeHandler;
+	::mouseMoveHandler = mouseMoveHandler;
 
 	if (!glfwInit())
 	{

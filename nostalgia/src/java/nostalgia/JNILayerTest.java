@@ -2,11 +2,11 @@ package nostalgia;
 
 import java.util.Random;
 
-import nostalgia.JNILayer.FrameHandler;
+import nostalgia.JNILayer.Handler;
 
 public class JNILayerTest {
 	public static void main(String[] args) {
-		int res = JNILayer.mainLoop("JNILayerTest MainWindow", 800, 600, 4, new FrameHandler() {
+		int res = JNILayer.mainLoop("JNILayerTest MainWindow", 800, 600, 20, new Handler() {
 			
 			private Random random = new Random();
 			
@@ -26,6 +26,9 @@ public class JNILayerTest {
 				}
 			}
 			
+			public void mouseMove(double xPts, double yPts) {
+				System.out.println("x: " + xPts + ", y: " + yPts);
+			}
 		});
 		System.out.println("mainLoop exited with code " + res);
 	}

@@ -1,20 +1,16 @@
 package nostalgia;
 
-import java.util.Random;
-
-import sun.awt.windows.ThemeReader;
-
 public final class JNILayer {
 	static {
 		System.loadLibrary("nostalgia");
 	}
 	
 	/**
-	 * <p>This class is used for handling graphic events of the framework main event loop.</p>
+	 * <p>This class is used for handling events of the framework main event loop.</p>
 	 * <p>You should subclass it, create an instance (you can do it inline) and pass this
 	 * instance to {@link JNILayer#mainLoop JNILayer.mainLoop()}</p>
 	 */
-	public abstract static class FrameHandler {
+	public abstract static class Handler {
 		/**
 		 * <p><em>This variable is used in JNI.
 		 * Don't change the signature</em></p>
@@ -53,6 +49,8 @@ public final class JNILayer {
 		 */
 		public void sizeChanged() { }
 
+		public void mouseMove(double xPts, double yPts) { }
+		
 		/**
 		 * @return array of the Red color component of points. Indexed like <code>j*pointsWidthCount + i</code>.
 		 * <p><em>Note: This array could (and should) be modified only from {@link #frame()} method.</em></p>
@@ -134,10 +132,10 @@ public static void main(String[] args) {
 	 * @param windowWidth Initial width of the window in real pixels
 	 * @param windowHeight Initial height of the window in real pixels
 	 * @param pixelsPerPoint The size of a point in pixels (4, for example)
-	 * @param frameHandler A user-made subclass of the {@link FrameHandler} object
+	 * @param frameHandler A user-made subclass of the {@link Handler} object
 	 * @return the exit code. If everything's fine it's zero.
 	 * 
 	 * 
 	 */
-	static native int mainLoop(String title, int windowWidth, int windowHeight, int pixelsPerPoint, FrameHandler frameHandler);
+	static native int mainLoop(String title, int windowWidth, int windowHeight, int pixelsPerPoint, Handler frameHandler);
 }

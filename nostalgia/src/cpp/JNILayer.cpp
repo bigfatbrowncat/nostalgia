@@ -18,6 +18,8 @@
 #define METHOD_HANDLER_SETSIZE_SIG		"(II)V"
 #define METHOD_HANDLER_MOUSEMOVE		"mouseMove"
 #define METHOD_HANDLER_MOUSEMOVE_SIG	"(DD)V"
+#define METHOD_HANDLER_MOUSEBUTTON		"innerMouseButton"
+#define METHOD_HANDLER_MOUSEBUTTON_SIG	"(III)V"
 #define FIELD_HANDLER_R					"r"
 #define FIELD_HANDLER_R_SIG				"[F"
 #define FIELD_HANDLER_G					"g"
@@ -36,6 +38,7 @@ extern "C"
 		jclass handlerClass;
 		jmethodID handlerFrameMethod;
 		jmethodID handlerMouseMoveMethod;
+		jmethodID handlerMouseButtonMethod;
 		jfieldID handlerRField;
 		jfieldID handlerGField;
 		jfieldID handlerBField;
@@ -59,6 +62,10 @@ extern "C"
 			handlerMouseMoveMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_MOUSEMOVE, METHOD_HANDLER_MOUSEMOVE_SIG);
 			if (handlerMouseMoveMethod == NULL) {
 				std::cout << "JNI problem: can't find " << METHOD_HANDLER_MOUSEMOVE << " method with signature " << METHOD_HANDLER_MOUSEMOVE_SIG << " in class " << CLASS_HANDLER;
+			}
+			handlerMouseButtonMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_MOUSEBUTTON, METHOD_HANDLER_MOUSEBUTTON_SIG);
+			if (handlerMouseButtonMethod == NULL) {
+				std::cout << "JNI problem: can't find " << METHOD_HANDLER_MOUSEBUTTON << " method with signature " << METHOD_HANDLER_MOUSEBUTTON_SIG << " in class " << CLASS_HANDLER;
 			}
 
 			handlerRField = env->GetFieldID(handlerClass, FIELD_HANDLER_R, FIELD_HANDLER_R_SIG);
@@ -123,11 +130,19 @@ extern "C"
 		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerMouseMoveMethod, xPoints, yPoints);
 	}
 
+	void mouse_button_handler_callback(int button, int action, int mods, void* custom)
+	{
+		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+		JNIEnv* env = fHCustom->env;
+
+		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerMouseButtonMethod, button, action, mods);
+	}
+
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_JNILayer_mainLoop(JNIEnv* env, jclass clz, jobject handler)
 	{
 		handlerJNICustom custom(env, handler);
-		return mainLoop(&frame_handler_callback, &resize_handler_callback, &mouse_move_handler_callback, &custom);
+		return mainLoop(&frame_handler_callback, &resize_handler_callback, &mouse_move_handler_callback, &mouse_button_handler_callback, &custom);
 	}
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_JNILayer_createWindow(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint)
@@ -137,7 +152,6 @@ extern "C"
 		env->ReleaseStringUTFChars(title, titleChars);
 		return res;
 	}
-
 
 	JNIEXPORT void JNICALL Java_nostalgia_JNILayer_setCursorVisibility(JNIEnv* env, jclass clz, jboolean visible)
 	{

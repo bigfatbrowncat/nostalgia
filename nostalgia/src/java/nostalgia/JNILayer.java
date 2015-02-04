@@ -1,5 +1,8 @@
 package nostalgia;
 
+import java.util.EnumSet;
+import java.util.Iterator;
+
 public final class JNILayer {
 	static {
 		System.loadLibrary("nostalgia");
@@ -12,6 +15,104 @@ public final class JNILayer {
 	 * @see {@link JNILayer#mainLoop JNILayer.mainLoop()}
 	 */
 	public abstract static class Handler {
+		
+		/**
+		 * Mouse buttons
+		 */
+		public enum MouseButton {
+			LEFT(0), RIGHT(1), MIDDLE(2),
+			BUTTON_4(3), BUTTON_5(4), BUTTON_6(5), BUTTON_7(6), BUTTON_8(7);
+			final int id;
+			MouseButton(int id) {
+				this.id = id;
+			}
+			static MouseButton fromId(int id) {
+				switch (id) {
+				case 0: return LEFT;
+				case 1: return RIGHT;
+				case 2: return MIDDLE;
+				case 3: return BUTTON_4;
+				case 4: return BUTTON_5;
+				case 5: return BUTTON_6;
+				case 6: return BUTTON_7;
+				case 7: return BUTTON_8;
+				default: throw new IllegalArgumentException("incorrect id");
+				}
+				
+			}
+		}
+		
+		/**
+		 * Mouse button states
+		 */
+		public enum MouseButtonState {
+			RELEASE(0), PRESS(1);
+			final int id;
+			MouseButtonState(int id) {
+				this.id = id;
+			}
+			static MouseButtonState fromId(int id) {
+				switch (id) {
+				case 0: return RELEASE;
+				case 1: return PRESS;
+				default: throw new IllegalArgumentException("incorrect id");
+				}
+			}
+		}
+		
+		public enum Modifier {
+			SHIFT(0x0001), CONTROL(0x0002), ALT(0x0004), SUPER(0x0008);
+			final int value;
+			Modifier(int value) {
+				this.value = value;
+			}
+			static Modifier fromId(int id) {
+				switch (id) {
+				case 0x0001: return SHIFT;
+				case 0x0002: return CONTROL;
+				case 0x0004: return ALT;
+				case 0x0008: return SUPER;
+				default: throw new IllegalArgumentException("incorrect id");
+				}
+			}
+		}
+		
+		public static class Modifiers {
+			private final EnumSet<Modifier> values;
+			public Modifiers(EnumSet<Modifier> values) {
+				this.values = values.clone();
+			}
+			static Modifiers fromFlags(int flags) {
+				EnumSet<Modifier> values = EnumSet.noneOf(Modifier.class);
+				if ((flags & Modifier.SHIFT.value) != 0) values.add(Modifier.SHIFT);
+				if ((flags & Modifier.CONTROL.value) != 0) values.add(Modifier.CONTROL);
+				if ((flags & Modifier.ALT.value) != 0) values.add(Modifier.ALT);
+				if ((flags & Modifier.SUPER.value) != 0) values.add(Modifier.SUPER);
+				return new Modifiers(values);
+			}
+			public boolean contains(Modifier mod) {
+				return values.contains(mod);
+			}
+			
+			int toFlags() {
+				int res = 0;
+				for (Modifier mod : values) {
+					res |= mod.value;
+				}
+				return res;
+			}
+			@Override
+			public String toString() {
+				if (values.size() == 0) return "()";
+				Iterator<Modifier> iter = values.iterator(); 
+				String s = "(" + iter.next();
+				while (iter.hasNext()) {
+					s += ", " + iter.next();
+				}
+				return s += ")";
+			}
+		}
+
 		/**
 		 * <p><em>This variable is used in JNI.
 		 * Don't change the signature</em></p>
@@ -53,6 +154,8 @@ public final class JNILayer {
 		public void sizeChanged() { }
 
 		/**
+		 * <p><em>This method is called from JNI.
+		 * Don't change the signature</em></p>
 		 * <p>This method is called by the framework each time when the user
 		 * moves the mouse while the application window is active.</p>
 		 * <p>Use {@link #getPointsWidthCount()} and {@link #getPointsHeightCount()} 
@@ -62,6 +165,23 @@ public final class JNILayer {
 		 * the screen
 		 */
 		public void mouseMove(double xPts, double yPts) { }
+		
+		/**
+		 * <p><em>This method is called from JNI.
+		 * Don't change the signature</em></p>
+		 */
+		void innerMouseButton(int btn, int st, int mod) {
+			mouseButton(MouseButton.fromId(btn), MouseButtonState.fromId(st), Modifiers.fromFlags(mod));
+		}
+		
+		/**
+		 * <p>This method is called by the framework each time when the user
+		 * clicks or releases a mouse button in the application window.</p>
+		 * @param button the button which state is changed
+		 * @param state the new button state
+		 * @param modifiers special keys that were pressed on the keyboard when the event occurred
+		 */
+		public void mouseButton(MouseButton button, MouseButtonState state, Modifiers modifiers) { }
 		
 		/**
 		 * @return array of the Red color component of points. Indexed like <code>j*pointsWidthCount + i</code>.

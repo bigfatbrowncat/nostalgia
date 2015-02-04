@@ -37,7 +37,11 @@ public class JNILayerTest {
 			boolean res = JNILayer.mainLoop(new Handler() {
 				
 				private Random random = new Random();
-				private int mouseX = 3, mouseY = 3;
+				private int mouseX = -10, mouseY = -10;
+				
+				private boolean zoomed = false;
+				private int ls, ts, rs, bs;
+
 				
 				public void frame() {
 					try {
@@ -50,6 +54,21 @@ public class JNILayerTest {
 						Bitmap screen = new Bitmap(r, g, b, null, pointsWidthCount, pointsHeightCount);
 						for (int i = 0; i < pointsWidthCount; i++) {
 							for (int j = 0; j < pointsHeightCount; j++) {
+								r[j * pointsWidthCount + i] = 0.5f;
+								g[j * pointsWidthCount + i] = 0.5f;
+								b[j * pointsWidthCount + i] = 0.5f;
+							}
+						}
+						
+						if (zoomed) {
+							ls = 0; ts = 0; rs = pointsWidthCount - 1; bs = pointsHeightCount - 1;
+						} else {
+							ls = pointsWidthCount / 2 - 30; rs = pointsWidthCount / 2 + 30;
+							ts = pointsHeightCount / 2 - 25; bs = pointsHeightCount / 2 + 25; 
+						}
+						
+						for (int i = ls; i <= rs; i++) {
+							for (int j = ts; j <= bs; j++) {
 								r[j * pointsWidthCount + i] = random.nextFloat() * 0.8f;
 								g[j * pointsWidthCount + i] = random.nextFloat() * 0.8f;
 								b[j * pointsWidthCount + i] = random.nextFloat() * 0.8f;
@@ -65,6 +84,13 @@ public class JNILayerTest {
 				public void mouseMove(double xPts, double yPts) {
 					mouseX = (int) Math.round(xPts);
 					mouseY = (int) Math.round(yPts);
+				}
+				
+				@Override
+				public void mouseButton(MouseButton button,	MouseButtonState state, Modifiers modifiers) {
+					if (mouseX > ls && mouseX < rs && mouseY > ts && mouseY < bs && state == MouseButtonState.RELEASE) {
+						zoomed = !zoomed;
+					}
 				}
 			});
 			if (res) {

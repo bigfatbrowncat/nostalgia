@@ -1,17 +1,10 @@
-/*
- * JNILayer.cpp
- *
- *  Created on: 02 ????. 2015 ?.
- *      Author: il
- */
-
 #include <iostream>
 
 #include "jni.h"
 
-#include "JNILayer.hpp"
+#include "Core.hpp"
 
-#define CLASS_HANDLER					"nostalgia/JNILayer$Handler"
+#define CLASS_HANDLER					"nostalgia/Core$Handler"
 #define METHOD_HANDLER_FRAME			"frame"
 #define METHOD_HANDLER_FRAME_SIG		"()V"
 #define METHOD_HANDLER_SETSIZE			"setSize"
@@ -139,13 +132,13 @@ extern "C"
 	}
 
 
-	JNIEXPORT jboolean JNICALL Java_nostalgia_JNILayer_mainLoop(JNIEnv* env, jclass clz, jobject handler)
+	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz, jobject handler)
 	{
 		handlerJNICustom custom(env, handler);
 		return mainLoop(&frame_handler_callback, &resize_handler_callback, &mouse_move_handler_callback, &mouse_button_handler_callback, &custom);
 	}
 
-	JNIEXPORT jboolean JNICALL Java_nostalgia_JNILayer_createWindow(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint)
+	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_open(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint)
 	{
 		const char* titleChars = env->GetStringUTFChars(title, NULL);
 		bool res = createWindow(titleChars, windowWidth, windowHeight, pixelsPerPoint);
@@ -153,7 +146,7 @@ extern "C"
 		return res;
 	}
 
-	JNIEXPORT void JNICALL Java_nostalgia_JNILayer_setCursorVisibility(JNIEnv* env, jclass clz, jboolean visible)
+	JNIEXPORT void JNICALL Java_nostalgia_Core_setCursorVisibility(JNIEnv* env, jclass clz, jboolean visible)
 	{
 		setCursorVisibility(visible);
 	}

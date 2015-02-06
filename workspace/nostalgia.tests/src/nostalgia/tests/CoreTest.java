@@ -1,13 +1,14 @@
-package nostalgia;
+package nostalgia.tests;
 
 import java.util.Random;
 
-import nostalgia.JNILayer.Handler;
+import nostalgia.Core;
+import nostalgia.Core.Handler;
 import nostalgia.graphics.Bitmap;
 import nostalgia.graphics.Color;
 import nostalgia.graphics.Painter;
 
-public class JNILayerTest {
+public class CoreTest {
 	public static void main(String[] args) {
 		
 		int cW = 8, cH = 8;
@@ -35,9 +36,9 @@ public class JNILayerTest {
 		
 		final Bitmap cursor = new Bitmap(c, c, c, a, cW, cH);
 		
-		if (JNILayer.createWindow("JNILayerTest MainWindow", 800, 600, 2)) {
-			JNILayer.setCursorVisibility(false);
-			boolean res = JNILayer.mainLoop(new Handler() {
+		if (Core.open("JNILayerTest MainWindow", 800, 600, 2)) {
+			Core.setCursorVisibility(false);
+			boolean res = Core.run(new Handler() {
 				
 				private Random random = new Random();
 				private int mouseX = -10, mouseY = -10;

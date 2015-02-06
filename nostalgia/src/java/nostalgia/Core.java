@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import nostalgia.graphics.Bitmap;
 
-public final class JNILayer {
+public final class Core {
 	static {
 		System.loadLibrary("nostalgia");
 	}
@@ -13,8 +13,8 @@ public final class JNILayer {
 	/**
 	 * <p>This class is used for handling events of the framework main event loop.</p>
 	 * <p>You should subclass it, create an instance (you can do it inline) and pass this
-	 * instance to {@link JNILayer#mainLoop JNILayer.mainLoop()}</p>
-	 * @see {@link JNILayer#mainLoop JNILayer.mainLoop()}
+	 * instance to {@link Core#mainLoop JNILayer.mainLoop()}</p>
+	 * @see {@link Core#mainLoop JNILayer.mainLoop()}
 	 */
 	public abstract static class Handler {
 		
@@ -141,7 +141,7 @@ public final class JNILayer {
 		 * <p><em>This method is called from JNI.
 		 * Don't change the signature</em></p>
 		 * <p>This method is called by the framework each frame and should be
-		 * implemented by the user of {@link JNILayer#mainLoop} 
+		 * implemented by the user of {@link Core#mainLoop} 
 		 * method to prepare the new screen contents.</p>
 		 */
 		public abstract void frame();
@@ -210,10 +210,10 @@ public final class JNILayer {
 	 * @param frameHandler A user-made subclass of the {@link Handler} object
 	 * @return <code>true</code> if the loop finished successfully, <code>false</code> otherwise. 
 	 */
-	static native boolean mainLoop(Handler frameHandler);
+	public static native boolean run(Handler frameHandler);
 	
-	static native boolean createWindow(String title, int windowWidth, int windowHeight, int pixelsPerPoint); 
+	public static native boolean open(String title, int windowWidth, int windowHeight, int pixelsPerPoint); 
 	
-	static native void setCursorVisibility(boolean visible);
+	public static native void setCursorVisibility(boolean visible);
 
 }

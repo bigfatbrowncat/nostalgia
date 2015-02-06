@@ -3,6 +3,8 @@ package nostalgia;
 import java.util.EnumSet;
 import java.util.Iterator;
 
+import nostalgia.graphics.Bitmap;
+
 public final class JNILayer {
 	static {
 		System.loadLibrary("nostalgia");
@@ -117,8 +119,8 @@ public final class JNILayer {
 		 * <p><em>This variable is used in JNI.
 		 * Don't change the signature</em></p>
 		 */
+		private Bitmap screen;
 		private float[] r, g, b;
-		private int pointsWidthCount, pointsHeightCount;
 		
 		/**
 		 * <p><em>This method is called from JNI.
@@ -128,11 +130,10 @@ public final class JNILayer {
 		 * @param pointsHeightCount new height of the screen in points
 		 */
 		void setSize(int pointsWidthCount, int pointsHeightCount) {
-			this.pointsWidthCount = pointsWidthCount;
-			this.pointsHeightCount = pointsHeightCount;
 			r = new float[pointsWidthCount * pointsHeightCount];
 			g = new float[pointsWidthCount * pointsHeightCount];
 			b = new float[pointsWidthCount * pointsHeightCount];
+			screen = new Bitmap(r, g, b, null, pointsWidthCount, pointsHeightCount);
 			sizeChanged();
 		}
 		
@@ -148,8 +149,8 @@ public final class JNILayer {
 		/**
 		 * <p>This method is called by the framework each time when the
 		 * screen size is changed and could be implemented in subclass.</p>
-		 * <p>Use {@link #getPointsWidthCount()} and {@link #getPointsHeightCount()} to
-		 * determine the current virtual screen size</p>
+		 * <p>Use {@link #getScreen()} to determine the current virtual 
+		 * screen size</p>
 		 */
 		public void sizeChanged() { }
 
@@ -158,7 +159,6 @@ public final class JNILayer {
 		 * Don't change the signature</em></p>
 		 * <p>This method is called by the framework each time when the user
 		 * moves the mouse while the application window is active.</p>
-		 * <p>Use {@link #getPointsWidthCount()} and {@link #getPointsHeightCount()} 
 		 * @param xPts x mouse coordinate in virtual points from the left size of
 		 * the screen
 		 * @param yPts y mouse coordinate in virtual points from the top side of
@@ -184,43 +184,10 @@ public final class JNILayer {
 		public void mouseButton(MouseButton button, MouseButtonState state, Modifiers modifiers) { }
 		
 		/**
-		 * @return array of the Red color component of points. Indexed like <code>j*pointsWidthCount + i</code>.
-		 * <p><em>Note: This array could (and should) be modified only from {@link #frame()} method.</em></p>
+		 * @return The screen bitmap. Draw here to make any changes to the screen.
 		 */
-		protected float[] getR() {
-			return r;
-		}
-
-		/**
-		 * @return array of the Green color component of points. Indexed like <code>j*pointsWidthCount + i</code>.
-		 * <p><em>Note: This array could (and should) be modified only from {@link #frame()} method.</em></p>
-		 */
-		protected float[] getG() {
-			return g;
-		}
-
-		/**
-		 * @return array of the Blue color component of points. Indexed like <code>j*pointsWidthCount + i</code>.
-		 * <p><em>Note: This array could (and should) be modified only from {@link #frame()} method.</em></p>
-		 */
-		protected float[] getB() {
-			return b;
-		}
-
-		/**
-		 * @return The current virtual screen width in points. If you want to handle changes of this value,
-		 * implement {@link #sizeChanged()} method.  
-		 */
-		protected int getPointsWidthCount() {
-			return pointsWidthCount;
-		}
-
-		/**
-		 * @return The current virtual screen height in points. If you want to handle changes of this value,
-		 * implement {@link #sizeChanged()} method.  
-		 */
-		protected int getPointsHeightCount() {
-			return pointsHeightCount;
+		public Bitmap getScreen() {
+			return screen;
 		}
 	}
 	

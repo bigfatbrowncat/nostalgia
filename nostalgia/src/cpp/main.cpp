@@ -93,6 +93,7 @@ float *r = NULL, *g = NULL, *b = NULL;
 resize_handler* resizeHandler;
 mouse_move_handler* mouseMoveHandler;
 mouse_button_handler* mouseButtonHandler;
+key_handler* keyHandler;
 void* custom;
 
 GLFWwindow* window;
@@ -332,10 +333,7 @@ void cleanup()
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
+	(*keyHandler)(key, scancode, action, mods, custom);
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -403,12 +401,22 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 	return true;
 }
 
-bool mainLoop(frame_handler* frameHandler, resize_handler* resizeHandler, mouse_move_handler* mouseMoveHandler, mouse_button_handler* mouseButtonHandler, void* custom)
+void closeWindow()
+{
+	glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
+bool mainLoop(frame_handler* frameHandler,
+              resize_handler* resizeHandler,
+              mouse_move_handler* mouseMoveHandler,
+              mouse_button_handler* mouseButtonHandler,
+              key_handler* keyHandler, void* custom)
 {
 	::custom = custom;
 	::resizeHandler = resizeHandler;
 	::mouseMoveHandler = mouseMoveHandler;
 	::mouseButtonHandler = mouseButtonHandler;
+	::keyHandler = keyHandler;
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);

@@ -13,6 +13,8 @@
 #define METHOD_HANDLER_MOUSEMOVE_SIG	"(DD)V"
 #define METHOD_HANDLER_MOUSEBUTTON		"innerMouseButton"
 #define METHOD_HANDLER_MOUSEBUTTON_SIG	"(III)V"
+#define METHOD_HANDLER_KEY				"innerKey"
+#define METHOD_HANDLER_KEY_SIG			"(IIII)V"
 #define FIELD_HANDLER_R					"r"
 #define FIELD_HANDLER_R_SIG				"[F"
 #define FIELD_HANDLER_G					"g"
@@ -32,6 +34,7 @@ extern "C"
 		jmethodID handlerFrameMethod;
 		jmethodID handlerMouseMoveMethod;
 		jmethodID handlerMouseButtonMethod;
+		jmethodID handlerKeyMethod;
 		jfieldID handlerRField;
 		jfieldID handlerGField;
 		jfieldID handlerBField;
@@ -59,6 +62,10 @@ extern "C"
 			handlerMouseButtonMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_MOUSEBUTTON, METHOD_HANDLER_MOUSEBUTTON_SIG);
 			if (handlerMouseButtonMethod == NULL) {
 				std::cout << "JNI problem: can't find " << METHOD_HANDLER_MOUSEBUTTON << " method with signature " << METHOD_HANDLER_MOUSEBUTTON_SIG << " in class " << CLASS_HANDLER;
+			}
+			handlerKeyMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_KEY, METHOD_HANDLER_KEY_SIG);
+			if (handlerKeyMethod == NULL) {
+				std::cout << "JNI problem: can't find " << METHOD_HANDLER_KEY << " method with signature " << METHOD_HANDLER_KEY_SIG << " in class " << CLASS_HANDLER;
 			}
 
 			handlerRField = env->GetFieldID(handlerClass, FIELD_HANDLER_R, FIELD_HANDLER_R_SIG);
@@ -131,11 +138,24 @@ extern "C"
 		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerMouseButtonMethod, button, action, mods);
 	}
 
+	void key_handler_callback(int key, int scancode, int action, int mods, void* custom)
+	{
+		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+		JNIEnv* env = fHCustom->env;
+
+		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerKeyMethod, key, scancode, action, mods);
+	}
+
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz, jobject handler)
 	{
 		handlerJNICustom custom(env, handler);
-		return mainLoop(&frame_handler_callback, &resize_handler_callback, &mouse_move_handler_callback, &mouse_button_handler_callback, &custom);
+		return mainLoop(&frame_handler_callback,
+		                &resize_handler_callback,
+		                &mouse_move_handler_callback,
+		                &mouse_button_handler_callback,
+		                &key_handler_callback,
+		                &custom);
 	}
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_open(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint)
@@ -149,5 +169,10 @@ extern "C"
 	JNIEXPORT void JNICALL Java_nostalgia_Core_setCursorVisibility(JNIEnv* env, jclass clz, jboolean visible)
 	{
 		setCursorVisibility(visible);
+	}
+
+	JNIEXPORT void JNICALL Java_nostalgia_Core_close(JNIEnv* env, jclass clz)
+	{
+		closeWindow();
 	}
 }

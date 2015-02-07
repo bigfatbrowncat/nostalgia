@@ -71,9 +71,8 @@ public class CoreTest {
 								b[j * randomPix.getWidth() + i] = random.nextFloat() * 0.8f;
 							}
 						}
-						randomPix.blit(screen, ls, ts);
-						
-						cursor.blit(screen, mouseX, mouseY);
+						p.drawBitmap(randomPix, ls, ts);
+						p.drawBitmap(cursor, mouseX, mouseY);
 						
 						p.setForeground(new Color(0.5f, 0f, 0f, 0.5f));
 						p.drawLine(10, 10, 10, 100);

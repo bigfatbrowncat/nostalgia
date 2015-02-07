@@ -48,62 +48,6 @@ public class Bitmap {
 		if (r.length < back) throw new IllegalArgumentException("length of color arrays should be greater than offset + stride * height");
 	}
 	
-	/**
-	 * This method paints this bitmap inside another one. 
-	 * It checks any problems with edges (for example if you try
-	 * to paint your image outside the other's boundaries, no
-	 * out-of-range errors will occur. If alpha channel is presented
-	 * 
-	 * @param other 
-	 * @param x0
-	 * @param y0
-	 */
-	public void blit(Bitmap other, int x0, int y0) {
-		// Cutting edges
-		int newOffset = offset, newWidth = width, newHeight = height;
-		
-		if (x0 < 0) {
-			newOffset -= x0;
-			newWidth += x0;
-			x0 = 0;
-		}
-		
-		if (x0 + width > other.width) {
-			newWidth -= x0 + width - other.width;
-		}
-		
-		if (y0 < 0) {
-			newOffset -= y0 * stride;
-			newHeight += y0;
-			y0 = 0;
-		}
-		
-		if (y0 + height > other.height) {
-			newHeight -= y0 + height - other.height;
-		}
-		
-		// Checking if we cut the whole image away
-		if (newWidth <= 0 || newHeight <= 0 || newOffset + stride * newHeight > r.length) return;
-		
-		Bitmap tmpBmp;
-		if (newOffset != offset || newWidth != width || newHeight != height) {
-			tmpBmp = new Bitmap(r, g, b, a, newWidth, newHeight, newOffset, stride);
-		} else {
-			tmpBmp = this;
-		}
-		
-		int index = tmpBmp.offset;
-		for (int j = 0; j < tmpBmp.height; j++) { 
-			for (int i = 0; i < tmpBmp.width; i++) {
-				if (tmpBmp.a != null) {
-					other.setPixel(x0 + i, y0 + j, tmpBmp.r[index + i], tmpBmp.g[index + i], tmpBmp.b[index + i], tmpBmp.a[index + i]);
-				} else {
-					other.setPixel(x0 + i, y0 + j, tmpBmp.r[index + i], tmpBmp.g[index + i], tmpBmp.b[index + i]);
-				}
-			}
-			index += tmpBmp.stride;
-		}
-	}
 	public void setPixel(int i, int j, float r, float g, float b) {
 		if (i >= 0 && j >= 0 && i < width && j < height) {
 			int index = offset + j * stride + i;

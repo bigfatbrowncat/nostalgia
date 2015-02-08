@@ -5,6 +5,7 @@ public class Painter {
 	private final Bitmap bitmap;
 	private Color foreground;
 	private Color background;
+	private Font font;
 	
 	public Painter(Bitmap bitmap) {
 		this.bitmap = bitmap;
@@ -145,6 +146,30 @@ public class Painter {
 		}
 	}
 	
+	public int stringWidth(String s) {
+		return s.length() * font.getWidth();
+	}
+	
+	public void drawString(int x0, int y0, String s) {
+		if (foreground != null) {
+			int x = x0;
+			char[] chars = s.toCharArray();
+			for (int k = 0; k < chars.length; k++) {
+				boolean[] symbol = font.getSymbol(chars[k]);
+				if (symbol != null) {
+					for (int i = 0; i < font.getWidth(); i++) {
+						for (int j = 0; j < font.getHeight(); j++) {
+							if (symbol[j * font.getWidth() + i]) {
+								bitmap.setPixel(x + i, y0 + j, foreground);
+							}
+						}
+					}
+				}
+				x += font.getWidth();
+			}
+		}
+	}
+	
 	public Color getForeground() {
 		return foreground;
 	}
@@ -161,4 +186,11 @@ public class Painter {
 		this.background = background;
 	}
 	
+	public void setFont(Font font) {
+		this.font = font;
+	}
+	
+	public Font getFont() {
+		return font;
+	}
 }

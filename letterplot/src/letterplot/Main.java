@@ -3,6 +3,7 @@ package letterplot;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.EnumSet;
 
 import nostalgia.Core;
 import nostalgia.Core.Handler;
@@ -57,6 +58,8 @@ public class Main {
 	//private static Font font;
 	private static Font editingFont, systemFont;
 	
+	private static String pangram = "Sphinx of black quartz, judge my vow.";
+	
 	private static void drawPreview(Color fore, Color back, Bitmap bmp, boolean[] letter, int x0, int y0) {
 		for (int i = 0; i < editingFont.getWidth(); i++) {
 			for (int j = 0; j < editingFont.getHeight(); j++) {
@@ -104,13 +107,8 @@ public class Main {
 		}
 	}
 	
-	public static void main(String[] args) {
-		try {
-			systemFont = Font.fromStream(Font.class.getResource("font6x8.dat").openStream());
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
+	public static void main(String[] args) throws IOException {
+		systemFont = Font.fromStream(Font.class.getResource("font6x8.dat").openStream());
 		//new Font(fontWidth, fontHeight);
 		/*for (char c = '0'; c <= '9'; c++) {
 			font.addSymbol(c);
@@ -153,6 +151,7 @@ public class Main {
 		font.addSymbol(',');
 		font.addSymbol(':');
 		font.addSymbol(';');*/
+		
 		editingFont = new Font(fontWidth, fontHeight);
 		editingFont.addSymbol('A');
 		currentChar = 'A';
@@ -162,6 +161,7 @@ public class Main {
 			boolean res = Core.run(new Handler() {
 				
 				private int mouseX = -10, mouseY = -10;
+				private boolean textCurVisible = false;
 				
 				boolean isInCells(int x, int y) {
 					return x > cellsX0 && y > cellsY0 &&
@@ -177,6 +177,7 @@ public class Main {
 
 				public void frame() {
 					try {
+						textCurVisible = System.currentTimeMillis() / 100 % 2 == 0;
 						boolean[] currentLetter = editingFont.getSymbol(currentChar);
 						Bitmap screen = getScreen();
 						Painter p = new Painter(screen);
@@ -224,12 +225,20 @@ public class Main {
 							drawPreview(foreColor, backColor, screen, editingFont.getSymbol(cur), pos + previewPadding, previewY0 + previewPadding);
 						}
 						
-						// Drawing pangram
+						// Drawing pangram and the cursor
 						p.setFont(editingFont);
 						p.setForeground(foreColor);
-						String pangram = "Sphinx of black quartz, judge my vow.";
 						int panW = p.stringWidth(pangram);
-						p.drawString((int)(screen.getWidth() / 2 - panW / 2), (int)(cellsY0 + cellSize * editingFont.getHeight() + paddingBottom / 3), pangram);
+						int pangramX0 = (int)(screen.getWidth() / 2 - panW / 2);
+						int pangramY0 = (int)(cellsY0 + cellSize * editingFont.getHeight() + paddingBottom / 3);
+						p.drawString(pangramX0, pangramY0, pangram);
+						int textCurX = pangramX0 + editingFont.getWidth() * pangram.length();
+						
+						if (textCurVisible) { 
+							p.setForeground(null);
+							p.setBackground(foreColor);
+							p.drawRectangle(textCurX, pangramY0, textCurX + editingFont.getWidth(), pangramY0 + editingFont.getHeight());
+						}
 						
 						// Drawing hot keys
 						//p.setForeground(foreHighlightColor);
@@ -345,6 +354,17 @@ public class Main {
 						saveFont("font.dat");
 					} else if (key == Key.F3 && state == KeyState.PRESS && modifiers.isEmpty()) {
 						loadFont("font.dat");
+					} else if (key == Key.BACKSPACE && (state == KeyState.PRESS || state == KeyState.REPEAT) && modifiers.isEmpty()) {
+						if (!pangram.equals("")) {
+							pangram = pangram.substring(0, pangram.length() - 1);
+						}
+					}
+				}
+				
+				@Override
+				public void character(char character, Modifiers modifiers) {
+					if (modifiers.isEmpty() || modifiers.equals(Modifiers.of(Modifier.SHIFT))) {
+						pangram += character;
 					}
 				}
 			});

@@ -251,6 +251,25 @@ public final class Core {
 			public boolean isEmpty() {
 				return values.isEmpty();
 			}
+			@Override
+			public boolean equals(Object obj) {
+				if (obj instanceof Modifiers) {
+					if (((Modifiers) obj).values.size() == values.size()) {
+						for (Modifier v : values) {
+							if (!((Modifiers) obj).values.contains(v)) return false;
+						}
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			public static Modifiers of(Modifier mod) {
+				return new Modifiers(EnumSet.of(mod));
+			}
+			public static Modifiers of(Modifier mod1, Modifier... rest) {
+				return new Modifiers(EnumSet.of(mod1, rest));
+			}
 			
 			int toFlags() {
 				int res = 0;
@@ -339,6 +358,14 @@ public final class Core {
 		}
 		
 		/**
+		 * <p><em>This method is called from JNI.
+		 * Don't change the signature</em></p>
+		 */
+		void innerCharacter(char character, int mods) {
+			character(character, Modifiers.fromFlags(mods));
+		}
+		
+		/**
 		 * <p>This method is called by the framework each time when the user
 		 * clicks or releases a mouse button in the application window.</p>
 		 * @param button the button which state is changed
@@ -348,6 +375,8 @@ public final class Core {
 		public void mouseButton(MouseButton button, MouseButtonState state, Modifiers modifiers) { }
 		
 		public void key(Key key, int scancode, KeyState state, Modifiers modifiers) { }
+		
+		public void character(char character, Modifiers modifiers) { }
 		
 		/**
 		 * @return The screen bitmap. Draw here to make any changes to the screen.

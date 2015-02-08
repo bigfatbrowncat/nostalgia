@@ -6,13 +6,15 @@ typedef void resize_handler(int pointsWidthCount, int pointsHeightCount, void* c
 typedef void mouse_move_handler(double xPoints, double yPoints, void* custom);
 typedef void mouse_button_handler(int button, int action, int mods, void* custom);
 typedef void key_handler(int key, int scancode, int action, int mods, void* custom);
+typedef void character_handler(unsigned int character, int mods, void* custom);
 
 bool createWindow(const char* title, int windowWidth, int windowHeight, int pixelsPerPoint);
 bool mainLoop(frame_handler* frameHandler,
               resize_handler* resizeHandler,
               mouse_move_handler* mouseMoveHandler,
               mouse_button_handler* mouseButtonHandler,
-              key_handler* keyHandler, void* custom);
+              key_handler* keyHandler,
+              character_handler* characterHandler, void* custom);
 void closeWindow();
 void setCursorVisibility(bool visible);
 

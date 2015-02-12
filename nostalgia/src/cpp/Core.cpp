@@ -96,83 +96,80 @@ extern "C"
 		}
 	};
 
-	void resize_handler_callback(int pointsWidthCount, int pointsHeightCount, void* custom)
+	struct CoreHandlers : public handlers
 	{
-		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
-		JNIEnv* env = fHCustom->env;
+		void resizeHandler(int pointsWidthCount, int pointsHeightCount)
+		{
+			handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+			JNIEnv* env = fHCustom->env;
 
-		jclass handlerClass = env->FindClass(CLASS_HANDLER);
-		if (handlerClass == NULL) {
-			std::cout << "JNI problem: can't find " << CLASS_HANDLER << " class";
+			jclass handlerClass = env->FindClass(CLASS_HANDLER);
+			if (handlerClass == NULL) {
+				std::cout << "JNI problem: can't find " << CLASS_HANDLER << " class";
+			}
+
+			env->CallVoidMethod(fHCustom->handler, fHCustom->handlerResizeMethod, pointsWidthCount, pointsHeightCount);
 		}
 
-		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerResizeMethod, pointsWidthCount, pointsHeightCount);
-	}
 
+		void frameHandler(float* r, float* g, float* b)
+		{
+			handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+			JNIEnv* env = fHCustom->env;
 
-	void frame_handler_callback(float* r, float* g, float* b, void* custom)
-	{
-		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
-		JNIEnv* env = fHCustom->env;
+			jfloatArray rArray = (jfloatArray)env->GetObjectField(fHCustom->handler, fHCustom->handlerRField);
+			jfloatArray gArray = (jfloatArray)env->GetObjectField(fHCustom->handler, fHCustom->handlerGField);
+			jfloatArray bArray = (jfloatArray)env->GetObjectField(fHCustom->handler, fHCustom->handlerBField);
 
-		jfloatArray rArray = (jfloatArray)env->GetObjectField(fHCustom->handler, fHCustom->handlerRField);
-		jfloatArray gArray = (jfloatArray)env->GetObjectField(fHCustom->handler, fHCustom->handlerGField);
-		jfloatArray bArray = (jfloatArray)env->GetObjectField(fHCustom->handler, fHCustom->handlerBField);
+			int rSize = env->GetArrayLength(rArray);
+			int gSize = env->GetArrayLength(gArray);
+			int bSize = env->GetArrayLength(bArray);
 
-		int rSize = env->GetArrayLength(rArray);
-		int gSize = env->GetArrayLength(gArray);
-		int bSize = env->GetArrayLength(bArray);
+			env->CallVoidMethod(fHCustom->handler, fHCustom->handlerFrameMethod);
 
-		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerFrameMethod);
+			env->GetFloatArrayRegion(rArray, 0, rSize, r);
+			env->GetFloatArrayRegion(gArray, 0, gSize, g);
+			env->GetFloatArrayRegion(bArray, 0, bSize, b);
+		}
 
-		env->GetFloatArrayRegion(rArray, 0, rSize, r);
-		env->GetFloatArrayRegion(gArray, 0, gSize, g);
-		env->GetFloatArrayRegion(bArray, 0, bSize, b);
-	}
+		void mouseMoveHandler(double xPoints, double yPoints)
+		{
+			handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+			JNIEnv* env = fHCustom->env;
 
-	void mouse_move_handler_callback(double xPoints, double yPoints, void* custom)
-	{
-		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
-		JNIEnv* env = fHCustom->env;
+			env->CallVoidMethod(fHCustom->handler, fHCustom->handlerMouseMoveMethod, xPoints, yPoints);
+		}
 
-		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerMouseMoveMethod, xPoints, yPoints);
-	}
+		void mouseButtonHandler(int button, int action, int mods)
+		{
+			handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+			JNIEnv* env = fHCustom->env;
 
-	void mouse_button_handler_callback(int button, int action, int mods, void* custom)
-	{
-		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
-		JNIEnv* env = fHCustom->env;
+			env->CallVoidMethod(fHCustom->handler, fHCustom->handlerMouseButtonMethod, button, action, mods);
+		}
 
-		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerMouseButtonMethod, button, action, mods);
-	}
+		void keyHandler(int key, int scancode, int action, int mods)
+		{
+			handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+			JNIEnv* env = fHCustom->env;
 
-	void key_handler_callback(int key, int scancode, int action, int mods, void* custom)
-	{
-		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
-		JNIEnv* env = fHCustom->env;
+			env->CallVoidMethod(fHCustom->handler, fHCustom->handlerKeyMethod, key, scancode, action, mods);
+		}
 
-		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerKeyMethod, key, scancode, action, mods);
-	}
+		void characterHandler(unsigned int character, int mods)
+		{
+			handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+			JNIEnv* env = fHCustom->env;
 
-	void character_handler_callback(unsigned int character, int mods, void* custom)
-	{
-		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
-		JNIEnv* env = fHCustom->env;
-
-		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerCharacterMethod, character, mods);
-	}
+			env->CallVoidMethod(fHCustom->handler, fHCustom->handlerCharacterMethod, character, mods);
+		}
+	};
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz, jobject handler)
 	{
 		handlerJNICustom* custom = new handlerJNICustom(env, handler);
 
-		handlers* h = new handlers();
-		h->frameHandler = frame_handler_callback;
-		h->resizeHandler = resize_handler_callback;
-		h->mouseMoveHandler = mouse_move_handler_callback;
-		h->mouseButtonHandler = mouse_button_handler_callback;
-		h->keyHandler = key_handler_callback;
-		h->characterHandler = character_handler_callback;
+		handlers* h = new CoreHandlers();
 		h->custom = custom;
 
 		return mainLoop(h);

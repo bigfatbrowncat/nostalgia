@@ -317,7 +317,7 @@ void reshape(GLFWwindow* window, int w, int h)
 	g = new float[pointsWidthCount * pointsHeightCount];
 	b = new float[pointsWidthCount * pointsHeightCount];
 
-	(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount, theHandlers->custom);
+	(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount);
 }
 
 void cleanup()
@@ -329,17 +329,17 @@ void cleanup()
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	(theHandlers->keyHandler)(key, scancode, action, mods, theHandlers->custom);
+	(theHandlers->keyHandler)(key, scancode, action, mods);
 }
 
 void characterCallback(GLFWwindow* window, unsigned int codepoint, int mods)
 {
-	(theHandlers->characterHandler)(codepoint, mods, theHandlers->custom);
+	(theHandlers->characterHandler)(codepoint, mods);
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	(theHandlers->mouseButtonHandler)(button, action, mods, theHandlers->custom);
+	(theHandlers->mouseButtonHandler)(button, action, mods);
 }
 
 void cursorPositionCallback(GLFWwindow* window, double x, double y)
@@ -350,7 +350,7 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 	double xpts = (x - xl) / pixelsPerPoint,
 	       ypts = (y - yt) / pixelsPerPoint;
 
-	(theHandlers->mouseMoveHandler)(xpts, ypts, theHandlers->custom);
+	(theHandlers->mouseMoveHandler)(xpts, ypts);
 }
 
 void setCursorVisibility(bool visible)
@@ -433,7 +433,7 @@ bool mainLoop(handlers* hh)
 
 		{
 			TimeMeasurer tm("JNI callback");
-			(theHandlers->frameHandler)(r, g, b, theHandlers->custom);
+			(theHandlers->frameHandler)(r, g, b);
 			makeModel(r, g, b);
 			tm.measureAndReport();
 		}

@@ -34,6 +34,7 @@ extern "C"
 		JNIEnv* env;
 		jclass handlerClass;
 		jmethodID handlerFrameMethod;
+		jmethodID handlerResizeMethod;
 		jmethodID handlerMouseMoveMethod;
 		jmethodID handlerMouseButtonMethod;
 		jmethodID handlerKeyMethod;
@@ -57,6 +58,10 @@ extern "C"
 			handlerFrameMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_FRAME, METHOD_HANDLER_FRAME_SIG);
 			if (handlerFrameMethod == NULL) {
 				std::cout << "JNI problem: can't find " << METHOD_HANDLER_FRAME << " method with signature " << METHOD_HANDLER_FRAME_SIG << " in class " << CLASS_HANDLER;
+			}
+			handlerResizeMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_SETSIZE, METHOD_HANDLER_SETSIZE_SIG);
+			if (handlerResizeMethod == NULL) {
+				std::cout << "JNI problem: can't find " << METHOD_HANDLER_SETSIZE << " method with signature " << METHOD_HANDLER_SETSIZE_SIG << " in class " << CLASS_HANDLER;
 			}
 			handlerMouseMoveMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_MOUSEMOVE, METHOD_HANDLER_MOUSEMOVE_SIG);
 			if (handlerMouseMoveMethod == NULL) {
@@ -93,19 +98,15 @@ extern "C"
 
 	void resize_handler_callback(int pointsWidthCount, int pointsHeightCount, void* custom)
 	{
-		JNIEnv* env = ((handlerJNICustom*)custom)->env;
+		handlerJNICustom* fHCustom = (handlerJNICustom*)custom;
+		JNIEnv* env = fHCustom->env;
 
 		jclass handlerClass = env->FindClass(CLASS_HANDLER);
 		if (handlerClass == NULL) {
 			std::cout << "JNI problem: can't find " << CLASS_HANDLER << " class";
 		}
-		jmethodID handlerSetSizeMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_SETSIZE, METHOD_HANDLER_SETSIZE_SIG);
-		if (handlerSetSizeMethod == NULL) {
-			std::cout << "JNI problem: can't find " << METHOD_HANDLER_SETSIZE << " method with signature " << METHOD_HANDLER_SETSIZE_SIG << " in class " << CLASS_HANDLER;
-		}
 
-		jobject handler = ((handlerJNICustom*)custom)->handler;
-		env->CallVoidMethod(handler, handlerSetSizeMethod, pointsWidthCount, pointsHeightCount);
+		env->CallVoidMethod(fHCustom->handler, fHCustom->handlerResizeMethod, pointsWidthCount, pointsHeightCount);
 	}
 
 

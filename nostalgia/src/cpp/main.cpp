@@ -90,12 +90,7 @@ GLfloat* vertexColorData = NULL;
 int verticesCount = 0;
 float *r = NULL, *g = NULL, *b = NULL;
 
-resize_handler* resizeHandler;
-mouse_move_handler* mouseMoveHandler;
-mouse_button_handler* mouseButtonHandler;
-key_handler* keyHandler;
-character_handler* characterHandler;
-void* custom;
+handlers* theHandlers;
 
 GLFWwindow* window;
 
@@ -322,7 +317,7 @@ void reshape(GLFWwindow* window, int w, int h)
 	g = new float[pointsWidthCount * pointsHeightCount];
 	b = new float[pointsWidthCount * pointsHeightCount];
 
-	(*resizeHandler)(pointsWidthCount, pointsHeightCount, custom);
+	(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount, theHandlers->custom);
 }
 
 void cleanup()
@@ -334,17 +329,17 @@ void cleanup()
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	(*keyHandler)(key, scancode, action, mods, custom);
+	(theHandlers->keyHandler)(key, scancode, action, mods, theHandlers->custom);
 }
 
 void characterCallback(GLFWwindow* window, unsigned int codepoint, int mods)
 {
-	(*characterHandler)(codepoint, mods, custom);
+	(theHandlers->characterHandler)(codepoint, mods, theHandlers->custom);
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	(*mouseButtonHandler)(button, action, mods, custom);
+	(theHandlers->mouseButtonHandler)(button, action, mods, theHandlers->custom);
 }
 
 void cursorPositionCallback(GLFWwindow* window, double x, double y)
@@ -355,7 +350,7 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 	double xpts = (x - xl) / pixelsPerPoint,
 	       ypts = (y - yt) / pixelsPerPoint;
 
-	(*mouseMoveHandler)(xpts, ypts, custom);
+	(theHandlers->mouseMoveHandler)(xpts, ypts, theHandlers->custom);
 }
 
 void setCursorVisibility(bool visible)
@@ -413,19 +408,9 @@ void closeWindow()
 	glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-bool mainLoop(frame_handler* frameHandler,
-              resize_handler* resizeHandler,
-              mouse_move_handler* mouseMoveHandler,
-              mouse_button_handler* mouseButtonHandler,
-              key_handler* keyHandler,
-              character_handler* characterHandler, void* custom)
+bool mainLoop(handlers* hh)
 {
-	::custom = custom;
-	::resizeHandler = resizeHandler;
-	::mouseMoveHandler = mouseMoveHandler;
-	::mouseButtonHandler = mouseButtonHandler;
-	::keyHandler = keyHandler;
-	::characterHandler = characterHandler;
+	::theHandlers = hh;
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
@@ -448,7 +433,7 @@ bool mainLoop(frame_handler* frameHandler,
 
 		{
 			TimeMeasurer tm("JNI callback");
-			(*frameHandler)(r, g, b, custom);
+			(theHandlers->frameHandler)(r, g, b, theHandlers->custom);
 			makeModel(r, g, b);
 			tm.measureAndReport();
 		}

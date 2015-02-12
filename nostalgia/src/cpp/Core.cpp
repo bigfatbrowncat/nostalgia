@@ -164,14 +164,18 @@ extern "C"
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz, jobject handler)
 	{
-		handlerJNICustom custom(env, handler);
-		return mainLoop(&frame_handler_callback,
-		                &resize_handler_callback,
-		                &mouse_move_handler_callback,
-		                &mouse_button_handler_callback,
-		                &key_handler_callback,
-		                &character_handler_callback,
-		                &custom);
+		handlerJNICustom* custom = new handlerJNICustom(env, handler);
+
+		handlers* h = new handlers();
+		h->frameHandler = frame_handler_callback;
+		h->resizeHandler = resize_handler_callback;
+		h->mouseMoveHandler = mouse_move_handler_callback;
+		h->mouseButtonHandler = mouse_button_handler_callback;
+		h->keyHandler = key_handler_callback;
+		h->characterHandler = character_handler_callback;
+		h->custom = custom;
+
+		return mainLoop(h);
 	}
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_open(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint)

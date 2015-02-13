@@ -3,7 +3,7 @@ package nostalgia.tests;
 import java.util.Random;
 
 import nostalgia.Core;
-import nostalgia.Core.Handler;
+import nostalgia.Handler;
 import nostalgia.graphics.Bitmap;
 import nostalgia.graphics.Color;
 import nostalgia.graphics.Painter;

@@ -4,8 +4,6 @@
 
 struct handlers
 {
-	void* custom;
-
 	virtual void frameHandler(float* r, float* g, float* b) = 0;
 	virtual void resizeHandler(int pointsWidthCount, int pointsHeightCount) = 0;
 	virtual void mouseMoveHandler(double xPoints, double yPoints) = 0;

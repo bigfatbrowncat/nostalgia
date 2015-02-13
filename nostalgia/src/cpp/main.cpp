@@ -10,9 +10,47 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-//#define GLFW_INCLUDE_GLU
+#ifdef _WIN32
+#define GLEW_STATIC
+#include <GL/glew.h>
+#endif
+
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
+
+//#define GLFW_INCLUDE_GLU
+#ifdef _WIN32
+
+bool globalInit()
+{
+	if (!glewInit()) {
+		printf("Problem initializing OpenGL\n");
+		return false;
+	}
+	/*if (gl3wInit())
+	{
+		printf("Problem initializing OpenGL\n");
+		return false;
+	}*/
+
+	/*int maj, min, slmaj, slmin;
+	getGlVersion(&maj, &min);
+	getGlslVersion(&slmaj, &slmin);
+
+	printf("OpenGL version: %d.%d\n", maj, min);
+	printf("GLSL version: %d.%d\n", slmaj, slmin);*/
+
+	return true;
+}
+#else
+bool globalInit()
+{
+	return true;
+}
+
+#endif
+
+
 
 #include "TimeMeasurer.hpp"
 #include "main.hpp"
@@ -374,7 +412,7 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 {
 	::pixelsPerPoint = pixelsPerPoint;
 
-	if (!glfwInit())
+	if (!globalInit() || !glfwInit())
 	{
 		return false;
 	}

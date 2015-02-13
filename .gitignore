@@ -1,0 +1,7 @@
+*.make
+glm/target/
+glfw-3.1/target/
+workspace/
+glfw-3.1/CMakeCache.txt
+glfw-3.1/CMakeFiles/3.1.2/
+glfw-3.1/CMakeFiles/cmake.check_cache

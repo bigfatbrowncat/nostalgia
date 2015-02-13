@@ -98,55 +98,66 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="jnilib" artifactName="nostalgia" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" description="" id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986" name="MinGWw64" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactExtension="dll" artifactName="nostalgia" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" description="" id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986" name="MinGWw64" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.734008055" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.1985968112" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
-							<builder buildPath="${workspace_loc:/nostalgia}/MinGWw64" id="cdt.managedbuild.tool.gnu.builder.mingw.base.443082024" name="CDT Internal Builder.MinGWw64" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
+							<builder buildPath="${workspace_loc:/nostalgia}/MinGWw64" id="cdt.managedbuild.tool.gnu.builder.mingw.base.443082024" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.1637648306" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
-								<option id="gnu.both.asm.option.include.paths.305689608" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option id="gnu.both.asm.option.include.paths.305689608" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glm}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include/win32}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glew-1.12.0/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1650209426" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.1526442530" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1965616547" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
-								<option id="gnu.cpp.compiler.option.include.paths.1895464563" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.1895464563" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glm}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include/win32}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glew-1.12.0/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1026840844" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.952501792" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
-								<option id="gnu.c.compiler.option.include.paths.351162719" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.351162719" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glm}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/JAVA_HOME/include/win32}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nostalgia/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glew-1.12.0/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.289157429" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1367186365" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">
-								<option defaultValue="true" id="gnu.c.link.option.shared.1679159663" superClass="gnu.c.link.option.shared" valueType="boolean"/>
+								<option defaultValue="true" id="gnu.c.link.option.shared.1679159663" name="Shared (-shared)" superClass="gnu.c.link.option.shared" valueType="boolean"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.1816017686" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base">
-								<option id="gnu.cpp.link.option.libs.1389807560" superClass="gnu.cpp.link.option.libs" valueType="libs">
+								<option id="gnu.cpp.link.option.libs.1389807560" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glew32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw3"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="opengl32"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="gdi32"/>
 								</option>
-								<option id="gnu.cpp.link.option.paths.752758665" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+								<option id="gnu.cpp.link.option.paths.752758665" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glfw-3.1/target/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/glew-1.12.0/lib}&quot;"/>
 								</option>
-								<option defaultValue="true" id="gnu.cpp.link.option.shared.1361169903" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.flags.87171037" superClass="gnu.cpp.link.option.flags" value="-lopengl32 -lgdi32" valueType="string"/>
+								<option defaultValue="true" id="gnu.cpp.link.option.shared.1361169903" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.flags.87171037" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-static-libgcc -static-libstdc++ -static" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.466623362" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
+								<outputType id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.output.base.1554481834" outputPrefix="" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.output.base"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
@@ -185,16 +196,22 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475;cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.548112134;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.1531776346;cdt.managedbuild.tool.gnu.cpp.compiler.input.132415937">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1305105884;cdt.managedbuild.config.gnu.macosx.exe.debug.1305105884.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1772808370;cdt.managedbuild.tool.gnu.c.compiler.input.600524111">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986;cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986.;cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1156530695;cdt.managedbuild.tool.gnu.c.compiler.input.1552211250">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986;cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986.;cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1156530695;cdt.managedbuild.tool.gnu.c.compiler.input.1552211250">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1305105884;cdt.managedbuild.config.gnu.macosx.exe.debug.1305105884.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1772808370;cdt.managedbuild.tool.gnu.c.compiler.input.600524111">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986;cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.1286867374;cdt.managedbuild.tool.gnu.cpp.compiler.input.1738098170">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475;cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.548112134;cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1079982726;cdt.managedbuild.tool.gnu.c.compiler.input.841907533">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986;cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.952501792;cdt.managedbuild.tool.gnu.c.compiler.input.289157429">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986;cdt.managedbuild.toolchain.gnu.macosx.base.1984658475.1729947986.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1965616547;cdt.managedbuild.tool.gnu.cpp.compiler.input.1026840844">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.429314712;cdt.managedbuild.config.macosx.exe.release.429314712.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.2015224183;cdt.managedbuild.tool.gnu.cpp.compiler.input.123683964">

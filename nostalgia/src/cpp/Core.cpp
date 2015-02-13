@@ -7,8 +7,8 @@
 #define CLASS_HANDLER					"nostalgia/Core$Handler"
 #define METHOD_HANDLER_FRAME			"frame"
 #define METHOD_HANDLER_FRAME_SIG		"()V"
-#define METHOD_HANDLER_SETSIZE			"setSize"
-#define METHOD_HANDLER_SETSIZE_SIG		"(II)V"
+#define METHOD_HANDLER_RESIZE			"innerResize"
+#define METHOD_HANDLER_RESIZE_SIG		"(II)V"
 #define METHOD_HANDLER_MOUSEMOVE		"mouseMove"
 #define METHOD_HANDLER_MOUSEMOVE_SIG	"(DD)V"
 #define METHOD_HANDLER_MOUSEBUTTON		"innerMouseButton"
@@ -59,9 +59,9 @@ extern "C"
 			if (handlerFrameMethod == NULL) {
 				std::cout << "JNI problem: can't find " << METHOD_HANDLER_FRAME << " method with signature " << METHOD_HANDLER_FRAME_SIG << " in class " << CLASS_HANDLER;
 			}
-			handlerResizeMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_SETSIZE, METHOD_HANDLER_SETSIZE_SIG);
+			handlerResizeMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_RESIZE, METHOD_HANDLER_RESIZE_SIG);
 			if (handlerResizeMethod == NULL) {
-				std::cout << "JNI problem: can't find " << METHOD_HANDLER_SETSIZE << " method with signature " << METHOD_HANDLER_SETSIZE_SIG << " in class " << CLASS_HANDLER;
+				std::cout << "JNI problem: can't find " << METHOD_HANDLER_RESIZE << " method with signature " << METHOD_HANDLER_RESIZE_SIG << " in class " << CLASS_HANDLER;
 			}
 			handlerMouseMoveMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_MOUSEMOVE, METHOD_HANDLER_MOUSEMOVE_SIG);
 			if (handlerMouseMoveMethod == NULL) {

@@ -304,7 +304,7 @@ public final class Core {
 		 * @param pointsWidthCount new width of the screen in points
 		 * @param pointsHeightCount new height of the screen in points
 		 */
-		void setSize(int pointsWidthCount, int pointsHeightCount) {
+		void innerResize(int pointsWidthCount, int pointsHeightCount) {
 			r = new float[pointsWidthCount * pointsHeightCount];
 			g = new float[pointsWidthCount * pointsHeightCount];
 			b = new float[pointsWidthCount * pointsHeightCount];

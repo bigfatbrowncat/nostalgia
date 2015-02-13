@@ -97,11 +97,6 @@ extern "C"
 
 		void resizeHandler(int pointsWidthCount, int pointsHeightCount)
 		{
-			jclass handlerClass = env->FindClass(CLASS_HANDLER);
-			if (handlerClass == NULL) {
-				std::cout << "JNI problem: can't find " << CLASS_HANDLER << " class";
-			}
-
 			env->CallVoidMethod(handler, handlerResizeMethod, pointsWidthCount, pointsHeightCount);
 		}
 

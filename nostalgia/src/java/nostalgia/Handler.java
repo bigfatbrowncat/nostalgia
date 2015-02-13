@@ -15,6 +15,20 @@ import nostalgia.graphics.Bitmap;
  */
 public abstract class Handler {
 	
+	private long nativeAddress;
+	private native long createNative();
+	private native void destroyNative(long nativeAddress);
+	
+	public Handler() {
+		nativeAddress = createNative();
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		destroyNative(nativeAddress);
+		super.finalize();
+	}
+	
 	/**
 	 * Mouse buttons
 	 */

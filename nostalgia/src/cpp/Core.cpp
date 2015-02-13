@@ -4,7 +4,7 @@
 
 #include "Core.hpp"
 
-#define CLASS_HANDLER					"nostalgia/Core$Handler"
+#define CLASS_HANDLER					"nostalgia/Handler"
 #define METHOD_HANDLER_FRAME			"frame"
 #define METHOD_HANDLER_FRAME_SIG		"()V"
 #define METHOD_HANDLER_RESIZE			"innerResize"

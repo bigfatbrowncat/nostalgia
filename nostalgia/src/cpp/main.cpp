@@ -90,7 +90,7 @@ GLfloat* vertexColorData = NULL;
 int verticesCount = 0;
 float *r = NULL, *g = NULL, *b = NULL;
 
-handlers* theHandlers;
+handlers* theHandlers = NULL;
 
 GLFWwindow* window;
 
@@ -411,16 +411,17 @@ void closeWindow()
 void setHandlers(handlers* handlers)
 {
 	::theHandlers = handlers;
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	reshape(window, width, height);
 }
 
 bool mainLoop()
 {
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
+	if (theHandlers == NULL) return false;
 
 	glfwSetTime(0.0);
 
-	reshape(window, width, height);
 	init();
 
 	double t, tOld = 0, dt;

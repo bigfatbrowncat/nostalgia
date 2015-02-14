@@ -25,10 +25,13 @@ public abstract class Handler {
 	public Handler() {
 		nativeAddress = createNative();
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
-		destroyNative(nativeAddress);
+		if (nativeAddress != 0) {
+			destroyNative(nativeAddress);
+			nativeAddress = 0;
+		}
 		super.finalize();
 	}
 	

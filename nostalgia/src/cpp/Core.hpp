@@ -6,8 +6,9 @@
 #include "main.hpp"
 
 // Core handler implementation
-struct CoreHandlers : public handlers
+class CoreHandlers : public handlers
 {
+private:
 	JNIEnv* env;
 	jclass handlerClass;
 	jmethodID handlerFrameMethod;
@@ -21,7 +22,7 @@ struct CoreHandlers : public handlers
 	jfieldID handlerBField;
 
 	jobject handler;
-
+public:
 	CoreHandlers(JNIEnv* env, jobject handler);
 	virtual ~CoreHandlers();
 

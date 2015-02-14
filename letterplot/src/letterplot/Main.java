@@ -228,7 +228,7 @@ public class Main {
 		
 		if (Core.open("LetterPlot", 800, 600, 2)) {
 			Core.setCursorVisibility(false);
-			boolean res = Core.run(new Handler() {
+			Core.setHandler(new Handler() {
 				
 				private int mouseX = -10, mouseY = -10;
 				private boolean textCurVisible = false;
@@ -515,6 +515,8 @@ public class Main {
 					}
 				}
 			});
+			
+			boolean res = Core.run();
 			if (res) {
 				System.out.println("mainLoop exited successfully");
 			} else {

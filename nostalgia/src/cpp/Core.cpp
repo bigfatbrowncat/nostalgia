@@ -26,17 +26,18 @@
 #define FIELD_HANDLER_B					"b"
 #define FIELD_HANDLER_B_SIG				"[F"
 
-#define RESULT_ERROR					1
+
 
 CoreHandlers::CoreHandlers(JNIEnv* env, jobject handler)
 {
 	this->env = env;
 	this->handler = env->NewGlobalRef(handler);
 
-	handlerClass = env->FindClass(CLASS_HANDLER);
-	if (handlerClass == NULL) {
+	jclass hc = env->FindClass(CLASS_HANDLER);
+	if (hc == NULL) {
 		std::cout << "JNI problem: can't find " << CLASS_HANDLER << " class";
 	}
+	handlerClass = (jclass)env->NewGlobalRef(hc);
 
 	handlerFrameMethod = env->GetMethodID(handlerClass, METHOD_HANDLER_FRAME, METHOD_HANDLER_FRAME_SIG);
 	if (handlerFrameMethod == NULL) {
@@ -79,6 +80,7 @@ CoreHandlers::CoreHandlers(JNIEnv* env, jobject handler)
 
 CoreHandlers::~CoreHandlers() {
 	env->DeleteGlobalRef(handler);
+	env->DeleteGlobalRef(handlerClass);
 }
 
 void CoreHandlers::resizeHandler(int pointsWidthCount, int pointsHeightCount)
@@ -126,8 +128,7 @@ void CoreHandlers::characterHandler(unsigned int character, int mods)
 
 extern "C"
 {
-
-	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz, jobject handler)
+	JNIEXPORT void JNICALL Java_nostalgia_Core_setHandler(JNIEnv* env, jclass clz, jobject handler)
 	{
 		jclass handlerClass = env->FindClass(CLASS_HANDLER);
 		if (handlerClass == NULL) {
@@ -140,8 +141,13 @@ extern "C"
 		}
 
 		jlong nativeAddress = env->GetLongField(handler, handlerNativeAddressField);
-		CoreHandlers* h = (CoreHandlers*)nativeAddress;
-		return mainLoop(h);
+		CoreHandlers* coreHandlers = (CoreHandlers*)nativeAddress;
+		setHandlers(coreHandlers);
+	}
+
+	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz)
+	{
+		return mainLoop();
 	}
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_open(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint)

@@ -15,7 +15,8 @@ struct handlers
 };
 
 bool createWindow(const char* title, int windowWidth, int windowHeight, int pixelsPerPoint);
-bool mainLoop(handlers* hh);
+void setHandlers(handlers* handlers);
+bool mainLoop();
 void closeWindow();
 void setCursorVisibility(bool visible);
 

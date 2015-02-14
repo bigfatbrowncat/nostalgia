@@ -14,7 +14,10 @@ import nostalgia.graphics.Bitmap;
  * @see {@link Core#mainLoop JNILayer.mainLoop()}
  */
 public abstract class Handler {
-	
+	static {
+		System.loadLibrary("nostalgia");
+	}
+
 	private long nativeAddress;
 	private native long createNative();
 	private native void destroyNative(long nativeAddress);

@@ -5,6 +5,8 @@ public final class Core {
 		System.loadLibrary("nostalgia");
 	}
 	
+	public static native void setHandler(Handler handler);
+	
 	/**
 	 * <p>This is the main method of the framework. It should be called <em>only once, on
 	 * the main thread</em>. Additionally, if the app is run with the original JRE,
@@ -17,14 +19,9 @@ public final class Core {
 	 * <p>This code demonstrates the usage of {@link #mainLoop} function. It shows random color noise
 	 * every frame</p>  
 	 * 
-	 * @param title The main window title 
-	 * @param windowWidth Initial width of the window in real pixels
-	 * @param windowHeight Initial height of the window in real pixels
-	 * @param pixelsPerPoint The size of a point in pixels (4, for example)
-	 * @param frameHandler A user-made subclass of the {@link Handler} object
 	 * @return <code>true</code> if the loop finished successfully, <code>false</code> otherwise. 
 	 */
-	public static native boolean run(Handler frameHandler);
+	public static native boolean run();
 	
 	/**
 	 * Opens the main application window

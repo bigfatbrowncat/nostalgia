@@ -408,10 +408,13 @@ void closeWindow()
 	glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-bool mainLoop(handlers* hh)
+void setHandlers(handlers* handlers)
 {
-	::theHandlers = hh;
+	::theHandlers = handlers;
+}
 
+bool mainLoop()
+{
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 

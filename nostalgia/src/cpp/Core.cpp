@@ -5,6 +5,8 @@
 #include "Core.hpp"
 
 #define CLASS_HANDLER					"nostalgia/Handler"
+#define FIELD_HANDLER_NATIVE_ADDRESS		"nativeAddress"
+#define FIELD_HANDLER_NATIVE_ADDRESS_SIG	"J"
 #define METHOD_HANDLER_FRAME			"frame"
 #define METHOD_HANDLER_FRAME_SIG		"()V"
 #define METHOD_HANDLER_RESIZE			"innerResize"
@@ -29,7 +31,7 @@
 CoreHandlers::CoreHandlers(JNIEnv* env, jobject handler)
 {
 	this->env = env;
-	this->handler = handler;
+	this->handler = env->NewGlobalRef(handler);
 
 	handlerClass = env->FindClass(CLASS_HANDLER);
 	if (handlerClass == NULL) {
@@ -73,7 +75,10 @@ CoreHandlers::CoreHandlers(JNIEnv* env, jobject handler)
 	if (handlerBField == NULL) {
 		std::cout << "JNI problem: can't find " << FIELD_HANDLER_B << " field with signature " << FIELD_HANDLER_B_SIG << " in class " << CLASS_HANDLER;
 	}
+}
 
+CoreHandlers::~CoreHandlers() {
+	env->DeleteGlobalRef(handler);
 }
 
 void CoreHandlers::resizeHandler(int pointsWidthCount, int pointsHeightCount)
@@ -124,8 +129,18 @@ extern "C"
 
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz, jobject handler)
 	{
-		handlers* h = new CoreHandlers(env, handler);
+		jclass handlerClass = env->FindClass(CLASS_HANDLER);
+		if (handlerClass == NULL) {
+			std::cout << "JNI problem: can't find " << CLASS_HANDLER << " class";
+		}
 
+		jfieldID handlerNativeAddressField = env->GetFieldID(handlerClass, FIELD_HANDLER_NATIVE_ADDRESS, FIELD_HANDLER_NATIVE_ADDRESS_SIG);
+		if (handlerNativeAddressField == NULL) {
+			std::cout << "JNI problem: can't find " << FIELD_HANDLER_NATIVE_ADDRESS << " field with signature " << FIELD_HANDLER_NATIVE_ADDRESS_SIG << " in class " << CLASS_HANDLER;
+		}
+
+		jlong nativeAddress = env->GetLongField(handler, handlerNativeAddressField);
+		CoreHandlers* h = (CoreHandlers*)nativeAddress;
 		return mainLoop(h);
 	}
 

@@ -23,6 +23,7 @@ struct CoreHandlers : public handlers
 	jobject handler;
 
 	CoreHandlers(JNIEnv* env, jobject handler);
+	virtual ~CoreHandlers();
 
 	void resizeHandler(int pointsWidthCount, int pointsHeightCount);
 	void frameHandler(float* r, float* g, float* b);

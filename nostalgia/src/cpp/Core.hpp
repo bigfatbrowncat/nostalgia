@@ -26,12 +26,12 @@ public:
 	CoreHandlers(JNIEnv* env, jobject handler);
 	virtual ~CoreHandlers();
 
-	void resizeHandler(int pointsWidthCount, int pointsHeightCount);
-	void frameHandler(float* r, float* g, float* b);
-	void mouseMoveHandler(double xPoints, double yPoints);
-	void mouseButtonHandler(int button, int action, int mods);
-	void keyHandler(int key, int scancode, int action, int mods);
-	void characterHandler(unsigned int character, int mods);
+	virtual bool resizeHandler(int pointsWidthCount, int pointsHeightCount);
+	virtual bool frameHandler(float* r, float* g, float* b);
+	virtual bool mouseMoveHandler(double xPoints, double yPoints);
+	virtual bool mouseButtonHandler(int button, int action, int mods);
+	virtual bool keyHandler(int key, int scancode, int action, int mods);
+	virtual bool characterHandler(unsigned int character, int mods);
 };
 
 

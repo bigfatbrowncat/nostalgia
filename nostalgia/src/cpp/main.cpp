@@ -93,7 +93,7 @@ float *r = NULL, *g = NULL, *b = NULL;
 handlers* theHandlers = NULL;
 
 GLFWwindow* window;
-
+bool terminated;
 
 void create_shader_program()
 {
@@ -317,7 +317,9 @@ void reshape(GLFWwindow* window, int w, int h)
 	g = new float[pointsWidthCount * pointsHeightCount];
 	b = new float[pointsWidthCount * pointsHeightCount];
 
-	(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount);
+	if (!(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount)) {
+		terminated = true;
+	}
 }
 
 void cleanup()
@@ -329,17 +331,23 @@ void cleanup()
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	(theHandlers->keyHandler)(key, scancode, action, mods);
+	if (!(theHandlers->keyHandler)(key, scancode, action, mods)) {
+		terminated = true;
+	}
 }
 
 void characterCallback(GLFWwindow* window, unsigned int codepoint, int mods)
 {
-	(theHandlers->characterHandler)(codepoint, mods);
+	if (!(theHandlers->characterHandler)(codepoint, mods)) {
+		terminated = true;
+	}
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	(theHandlers->mouseButtonHandler)(button, action, mods);
+	if (!(theHandlers->mouseButtonHandler)(button, action, mods)) {
+		terminated = true;
+	}
 }
 
 void cursorPositionCallback(GLFWwindow* window, double x, double y)
@@ -350,7 +358,9 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 	double xpts = (x - xl) / pixelsPerPoint,
 	       ypts = (y - yt) / pixelsPerPoint;
 
-	(theHandlers->mouseMoveHandler)(xpts, ypts);
+	if (!(theHandlers->mouseMoveHandler)(xpts, ypts)) {
+		terminated = true;
+	}
 }
 
 void setCursorVisibility(bool visible)
@@ -427,6 +437,7 @@ bool mainLoop()
 	double t, tOld = 0, dt;
 	bool finish = false;
 
+	terminated = false;
 	while (!finish)
 	{
 		TimeMeasurer tm("loop");
@@ -437,7 +448,9 @@ bool mainLoop()
 
 		{
 			TimeMeasurer tm("JNI callback");
-			(theHandlers->frameHandler)(r, g, b);
+			if (!(theHandlers->frameHandler)(r, g, b)) {
+				terminated = true;
+			}
 			makeModel(r, g, b);
 			tm.measureAndReport();
 		}
@@ -455,12 +468,17 @@ bool mainLoop()
 		{
 			finish = true;
 		}
+
+		if (terminated)
+		{
+			finish = true;
+		}
 		tm.measureAndReport();
 	}
 	cleanup();
 
 
 	glfwTerminate();
-	return true;
+	return !terminated;
 }
 

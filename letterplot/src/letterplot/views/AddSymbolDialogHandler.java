@@ -64,7 +64,6 @@ public abstract class AddSymbolDialogHandler extends BaseHandler {
 		String[] hotKeyDesc = new String[] { "Cancel", "OK" };
 		
 		drawHotkeys(screen, hotKeys, hotKeyDesc);
-
 	}
 	
 	@Override

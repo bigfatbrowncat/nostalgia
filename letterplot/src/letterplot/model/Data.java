@@ -49,6 +49,10 @@ public class Data {
 			try {
 				fis = new FileInputStream(filename);
 				editingFont = Font.fromStream(fis);
+				if (editingFont.getSymbol(currentChar) == null) {
+					currentChar = editingFont.getFirstSymbol();
+				}
+
 				return true;
 			} finally {
 				if (fis != null) fis.close();

@@ -83,13 +83,15 @@ CoreHandlers::~CoreHandlers() {
 	env->DeleteGlobalRef(handlerClass);
 }
 
-void CoreHandlers::resizeHandler(int pointsWidthCount, int pointsHeightCount)
+bool CoreHandlers::resizeHandler(int pointsWidthCount, int pointsHeightCount)
 {
 	env->CallVoidMethod(handler, handlerResizeMethod, pointsWidthCount, pointsHeightCount);
+
+	return env->ExceptionCheck() == JNI_FALSE;
 }
 
 
-void CoreHandlers::frameHandler(float* r, float* g, float* b)
+bool CoreHandlers::frameHandler(float* r, float* g, float* b)
 {
 	jfloatArray rArray = (jfloatArray)env->GetObjectField(handler, handlerRField);
 	jfloatArray gArray = (jfloatArray)env->GetObjectField(handler, handlerGField);
@@ -104,26 +106,32 @@ void CoreHandlers::frameHandler(float* r, float* g, float* b)
 	env->GetFloatArrayRegion(rArray, 0, rSize, r);
 	env->GetFloatArrayRegion(gArray, 0, gSize, g);
 	env->GetFloatArrayRegion(bArray, 0, bSize, b);
+
+	return env->ExceptionCheck() == JNI_FALSE;
 }
 
-void CoreHandlers::mouseMoveHandler(double xPoints, double yPoints)
+bool CoreHandlers::mouseMoveHandler(double xPoints, double yPoints)
 {
 	env->CallVoidMethod(handler, handlerMouseMoveMethod, xPoints, yPoints);
+	return env->ExceptionCheck() == JNI_FALSE;
 }
 
-void CoreHandlers::mouseButtonHandler(int button, int action, int mods)
+bool CoreHandlers::mouseButtonHandler(int button, int action, int mods)
 {
 	env->CallVoidMethod(handler, handlerMouseButtonMethod, button, action, mods);
+	return env->ExceptionCheck() == JNI_FALSE;
 }
 
-void CoreHandlers::keyHandler(int key, int scancode, int action, int mods)
+bool CoreHandlers::keyHandler(int key, int scancode, int action, int mods)
 {
 	env->CallVoidMethod(handler, handlerKeyMethod, key, scancode, action, mods);
+	return env->ExceptionCheck() == JNI_FALSE;
 }
 
-void CoreHandlers::characterHandler(unsigned int character, int mods)
+bool CoreHandlers::characterHandler(unsigned int character, int mods)
 {
 	env->CallVoidMethod(handler, handlerCharacterMethod, character, mods);
+	return env->ExceptionCheck() == JNI_FALSE;
 }
 
 extern "C"

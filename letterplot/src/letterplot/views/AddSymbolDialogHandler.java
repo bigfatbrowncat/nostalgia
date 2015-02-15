@@ -73,7 +73,12 @@ public abstract class AddSymbolDialogHandler extends BaseHandler {
 			showMainScreen();
 		} else if (key == Key.ENTER && state == KeyState.PRESS && modifiers.isEmpty()) {
 			if (!addSymbolHexCodeInput.contains("-")) {
-				int addCode = Integer.parseInt(addSymbolHexCodeInput, 16);
+				int addCode;
+				if (addSymbolHexCodeInput != "") {
+					addCode = Integer.parseInt(addSymbolHexCodeInput, 16);
+				} else {
+					addCode = 0;
+				}
 				getData().getEditingFont().addSymbol((char)addCode);
 				getData().setCurrentChar((char)addCode);
 			} else {

@@ -7,10 +7,11 @@
 #include <algorithm>
 #include <iostream>
 
+#include <GL3/gl3w.h>
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-//#define GLFW_INCLUDE_GLU
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
@@ -94,6 +95,67 @@ handlers* theHandlers = NULL;
 
 GLFWwindow* window;
 bool terminated;
+
+void getGlVersion(int *major, int *minor)
+{
+    const char *verstr = (const char *) glGetString(GL_VERSION);
+    if ((verstr == NULL) || (sscanf(verstr,"%d.%d", major, minor) != 2))
+    {
+        *major = *minor = 0;
+        fprintf(stderr, "Invalid GL_VERSION format!!!\n");
+    }
+}
+
+void getGlslVersion(int *major, int *minor)
+{
+    int gl_major, gl_minor;
+    getGlVersion(&gl_major, &gl_minor);
+
+    *major = *minor = 0;
+    if (gl_major == 1)
+    {
+        /* GL v1.x can only provide GLSL v1.00 as an extension */
+        const char *extstr = (const char *) glGetString(GL_EXTENSIONS);
+        if ((extstr != NULL) &&
+            (strstr(extstr, "GL_ARB_shading_language_100") != NULL))
+        {
+            *major = 1;
+            *minor = 0;
+        }
+    }
+    else if (gl_major >= 2)
+    {
+        /* GL v2.0 and greater must parse the version string */
+        const char *verstr =
+            (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+        if((verstr == NULL) ||
+            (sscanf(verstr, "%d.%d", major, minor) != 2))
+        {
+            *major = *minor = 0;
+            fprintf(stderr,
+                "Invalid GL_SHADING_LANGUAGE_VERSION format!!!\n");
+        }
+    }
+}
+
+bool glInit()
+{
+    if (gl3wInit())
+    {
+        printf("Problem initializing OpenGL\n");
+        return false;
+    }
+
+    int maj, min, slmaj, slmin;
+    getGlVersion(&maj, &min);
+    getGlslVersion(&slmaj, &slmin);
+
+    printf("OpenGL version: %d.%d\n", maj, min);
+    printf("GLSL version: %d.%d\n", slmaj, slmin);
+
+    return true;
+}
 
 void create_shader_program()
 {
@@ -287,6 +349,8 @@ void display()
 
 void reshape(GLFWwindow* window, int w, int h)
 {
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+
 	windowWidth = w;
 	windowHeight = h;
 
@@ -379,7 +443,7 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 {
 	::pixelsPerPoint = pixelsPerPoint;
 
-	if (!glfwInit())
+    if (!glfwInit())
 	{
 		return false;
 	}
@@ -389,7 +453,7 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DEPTH_BITS, 16);
-	glfwWindowHint(GLFW_SAMPLES, 3);
+	glfwWindowHint(GLFW_SAMPLES, 1);
 
 	window = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
 	if (!window)
@@ -399,7 +463,7 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 		return false;
 	}
 
-	cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+	//cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
 	glfwSetFramebufferSizeCallback(window, reshape);
 	glfwSetKeyCallback(window, keyCallback);
@@ -408,6 +472,7 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 	glfwSetCursorPosCallback(window, cursorPositionCallback);
 
 	glfwMakeContextCurrent(window);
+    glInit();
 	glfwSwapInterval(1);
 
 	return true;

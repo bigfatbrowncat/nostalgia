@@ -128,15 +128,10 @@ GLfloat* vertexColorData = NULL;
 int verticesCount = 0;
 float *r = NULL, *g = NULL, *b = NULL;
 
-resize_handler* resizeHandler;
-mouse_move_handler* mouseMoveHandler;
-mouse_button_handler* mouseButtonHandler;
-key_handler* keyHandler;
-character_handler* characterHandler;
-void* custom;
+handlers* theHandlers = NULL;
 
 GLFWwindow* window;
-
+bool terminated;
 
 void create_shader_program()
 {
@@ -360,7 +355,9 @@ void reshape(GLFWwindow* window, int w, int h)
 	g = new float[pointsWidthCount * pointsHeightCount];
 	b = new float[pointsWidthCount * pointsHeightCount];
 
-	(*resizeHandler)(pointsWidthCount, pointsHeightCount, custom);
+	if (!(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount)) {
+		terminated = true;
+	}
 }
 
 void cleanup()
@@ -372,17 +369,23 @@ void cleanup()
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	(*keyHandler)(key, scancode, action, mods, custom);
+	if (!(theHandlers->keyHandler)(key, scancode, action, mods)) {
+		terminated = true;
+	}
 }
 
 void characterCallback(GLFWwindow* window, unsigned int codepoint, int mods)
 {
-	(*characterHandler)(codepoint, mods, custom);
+	if (!(theHandlers->characterHandler)(codepoint, mods)) {
+		terminated = true;
+	}
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	(*mouseButtonHandler)(button, action, mods, custom);
+	if (!(theHandlers->mouseButtonHandler)(button, action, mods)) {
+		terminated = true;
+	}
 }
 
 void cursorPositionCallback(GLFWwindow* window, double x, double y)
@@ -393,7 +396,9 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 	double xpts = (x - xl) / pixelsPerPoint,
 	       ypts = (y - yt) / pixelsPerPoint;
 
-	(*mouseMoveHandler)(xpts, ypts, custom);
+	if (!(theHandlers->mouseMoveHandler)(xpts, ypts)) {
+		terminated = true;
+	}
 }
 
 void setCursorVisibility(bool visible)
@@ -451,31 +456,26 @@ void closeWindow()
 	glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-bool mainLoop(frame_handler* frameHandler,
-              resize_handler* resizeHandler,
-              mouse_move_handler* mouseMoveHandler,
-              mouse_button_handler* mouseButtonHandler,
-              key_handler* keyHandler,
-              character_handler* characterHandler, void* custom)
+void setHandlers(handlers* handlers)
 {
-	::custom = custom;
-	::resizeHandler = resizeHandler;
-	::mouseMoveHandler = mouseMoveHandler;
-	::mouseButtonHandler = mouseButtonHandler;
-	::keyHandler = keyHandler;
-	::characterHandler = characterHandler;
-
+	::theHandlers = handlers;
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
+	reshape(window, width, height);
+}
+
+bool mainLoop()
+{
+	if (theHandlers == NULL) return false;
 
 	glfwSetTime(0.0);
 
-	reshape(window, width, height);
 	init();
 
 	double t, tOld = 0, dt;
 	bool finish = false;
 
+	terminated = false;
 	while (!finish)
 	{
 		TimeMeasurer tm("loop");
@@ -486,7 +486,9 @@ bool mainLoop(frame_handler* frameHandler,
 
 		{
 			TimeMeasurer tm("JNI callback");
-			(*frameHandler)(r, g, b, custom);
+			if (!(theHandlers->frameHandler)(r, g, b)) {
+				terminated = true;
+			}
 			makeModel(r, g, b);
 			tm.measureAndReport();
 		}
@@ -504,12 +506,17 @@ bool mainLoop(frame_handler* frameHandler,
 		{
 			finish = true;
 		}
+
+		if (terminated)
+		{
+			finish = true;
+		}
 		tm.measureAndReport();
 	}
 	cleanup();
 
 
 	glfwTerminate();
-	return true;
+	return !terminated;
 }
 

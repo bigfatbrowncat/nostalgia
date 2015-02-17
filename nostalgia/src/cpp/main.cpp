@@ -244,8 +244,6 @@ void init()
 	glGenVertexArrays(1, &vertexArray);
 	glBindVertexArray(vertexArray);
 
-
-
 	// Starting drawing
 	glClearColor(0.0f, 0.0f, 0.0f, 0.f);
 
@@ -408,6 +406,13 @@ void reshape(GLFWwindow* window, int w, int h)
 	}
 
 	allocateBuffers();
+
+	if (!(theHandlers->frameHandler)(r, g, b)) {
+		terminated = true;
+	}
+	makeModel(r, g, b);
+	display();
+	glfwSwapBuffers(window);
 }
 
 void cleanup()
@@ -490,7 +495,7 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 
 	//cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
-	glfwSetFramebufferSizeCallback(window, reshape);
+	glfwSetWindowSizeCallback(window, reshape);
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetCharModsCallback(window, characterCallback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
@@ -528,6 +533,7 @@ bool mainLoop()
 	bool finish = false;
 
 	terminated = false;
+
 	while (!finish)
 	{
 		TimeMeasurer tm("loop");
@@ -544,10 +550,10 @@ bool mainLoop()
 			tm.measureAndReport();
 		}
 
-		display();
 
 		{
 			TimeMeasurer tm("draw");
+			display();
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			tm.measureAndReport();

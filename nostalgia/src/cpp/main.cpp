@@ -80,6 +80,7 @@ using namespace std;
 
 GLuint shaderProgram;
 GLuint vertexArray;
+bool buffersAllocated = false;
 GLuint vertexBuffer, colorBuffer;
 glm::mat4 proportional;
 int pixelsPerPoint = 5;
@@ -243,8 +244,7 @@ void init()
 	glGenVertexArrays(1, &vertexArray);
 	glBindVertexArray(vertexArray);
 
-	glGenBuffers(1, &vertexBuffer);
-	glGenBuffers(1, &colorBuffer);
+
 
 	// Starting drawing
 	glClearColor(0.0f, 0.0f, 0.0f, 0.f);
@@ -305,6 +305,8 @@ void display()
 	TimeMeasurer tm("display");
 	//assert(vertices.size() == vertexColors.size());
 
+
+
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexData[0], GL_STATIC_DRAW);
 
@@ -344,11 +346,31 @@ void display()
 
 	glDisableVertexAttribArray(VERTEX_INDEX);
 	glDisableVertexAttribArray(COLOR_INDEX);
+
 	tm.measureAndReport();
+}
+
+void allocateBuffers()
+{
+	glGenBuffers(1, &vertexBuffer);
+	glGenBuffers(1, &colorBuffer);
+	buffersAllocated = true;
+}
+
+void freeBuffers()
+{
+	if (buffersAllocated)
+	{
+		glDeleteBuffers(1, &vertexBuffer);
+		glDeleteBuffers(1, &colorBuffer);
+		buffersAllocated = false;
+	}
 }
 
 void reshape(GLFWwindow* window, int w, int h)
 {
+	freeBuffers();
+
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 
 	windowWidth = w;
@@ -384,11 +406,14 @@ void reshape(GLFWwindow* window, int w, int h)
 	if (!(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount)) {
 		terminated = true;
 	}
+
+	allocateBuffers();
 }
 
 void cleanup()
 {
-	glDeleteBuffers(1, &vertexBuffer);
+	freeBuffers();
+
 	glDeleteVertexArrays(1, &vertexArray);
 	glDeleteProgram(shaderProgram);
 }
@@ -509,7 +534,6 @@ bool mainLoop()
 		t = glfwGetTime();
 		dt = t - tOld;
 		tOld = t;
-
 
 		{
 			TimeMeasurer tm("JNI callback");

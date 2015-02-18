@@ -311,6 +311,7 @@ public abstract class Handler {
 	 */
 	private Bitmap screen;
 	private float[] r, g, b;
+	private int pointsWidthCount, pointsHeightCount;
 	
 	/**
 	 * <p><em>This method is called from JNI.
@@ -320,9 +321,15 @@ public abstract class Handler {
 	 * @param pointsHeightCount new height of the screen in points
 	 */
 	void innerResize(int pointsWidthCount, int pointsHeightCount) {
-		r = new float[pointsWidthCount * pointsHeightCount];
-		g = new float[pointsWidthCount * pointsHeightCount];
-		b = new float[pointsWidthCount * pointsHeightCount];
+		this.pointsWidthCount = pointsWidthCount;
+		this.pointsHeightCount = pointsHeightCount;
+
+		if (r == null || r.length < pointsWidthCount * pointsHeightCount) 
+		{
+			r = new float[pointsWidthCount * pointsHeightCount];
+			g = new float[pointsWidthCount * pointsHeightCount];
+			b = new float[pointsWidthCount * pointsHeightCount];
+		}
 		screen = new Bitmap(r, g, b, null, pointsWidthCount, pointsHeightCount);
 		sizeChanged();
 	}

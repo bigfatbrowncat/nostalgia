@@ -20,6 +20,8 @@ private:
 	jfieldID handlerRField;
 	jfieldID handlerGField;
 	jfieldID handlerBField;
+	jfieldID handlerPointsWidthCountField;
+	jfieldID handlerPointsHeightCountField;
 
 	jobject handler;
 public:

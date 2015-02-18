@@ -25,8 +25,10 @@
 #define FIELD_HANDLER_G_SIG				"[F"
 #define FIELD_HANDLER_B					"b"
 #define FIELD_HANDLER_B_SIG				"[F"
-
-
+#define FIELD_HANDLER_POINTS_WIDTH_COUNT		"pointsWidthCount"
+#define FIELD_HANDLER_POINTS_WIDTH_COUNT_SIG	"I"
+#define FIELD_HANDLER_POINTS_HEIGHT_COUNT		"pointsHeightCount"
+#define FIELD_HANDLER_POINTS_HEIGHT_COUNT_SIG	"I"
 
 CoreHandlers::CoreHandlers(JNIEnv* env, jobject handler)
 {
@@ -76,6 +78,16 @@ CoreHandlers::CoreHandlers(JNIEnv* env, jobject handler)
 	if (handlerBField == NULL) {
 		std::cout << "JNI problem: can't find " << FIELD_HANDLER_B << " field with signature " << FIELD_HANDLER_B_SIG << " in class " << CLASS_HANDLER;
 	}
+
+	handlerPointsWidthCountField = env->GetFieldID(handlerClass, FIELD_HANDLER_POINTS_WIDTH_COUNT, FIELD_HANDLER_POINTS_WIDTH_COUNT_SIG);
+	if (handlerPointsWidthCountField == NULL) {
+		std::cout << "JNI problem: can't find " << FIELD_HANDLER_POINTS_WIDTH_COUNT << " field with signature " << FIELD_HANDLER_POINTS_WIDTH_COUNT_SIG << " in class " << CLASS_HANDLER;
+	}
+	handlerPointsHeightCountField = env->GetFieldID(handlerClass, FIELD_HANDLER_POINTS_HEIGHT_COUNT, FIELD_HANDLER_POINTS_HEIGHT_COUNT_SIG);
+	if (handlerPointsHeightCountField == NULL) {
+		std::cout << "JNI problem: can't find " << FIELD_HANDLER_POINTS_HEIGHT_COUNT << " field with signature " << FIELD_HANDLER_POINTS_HEIGHT_COUNT_SIG << " in class " << CLASS_HANDLER;
+	}
+
 }
 
 CoreHandlers::~CoreHandlers() {
@@ -97,15 +109,16 @@ bool CoreHandlers::frameHandler(float* r, float* g, float* b)
 	jfloatArray gArray = (jfloatArray)env->GetObjectField(handler, handlerGField);
 	jfloatArray bArray = (jfloatArray)env->GetObjectField(handler, handlerBField);
 
-	int rSize = env->GetArrayLength(rArray);
-	int gSize = env->GetArrayLength(gArray);
-	int bSize = env->GetArrayLength(bArray);
+	jint pointsWidthCount = env->GetIntField(handler, handlerPointsWidthCountField);
+	jint pointsHeightCount = env->GetIntField(handler, handlerPointsHeightCountField);
+
+	int size = pointsWidthCount * pointsHeightCount;
 
 	env->CallVoidMethod(handler, handlerFrameMethod);
 
-	env->GetFloatArrayRegion(rArray, 0, rSize, r);
-	env->GetFloatArrayRegion(gArray, 0, gSize, g);
-	env->GetFloatArrayRegion(bArray, 0, bSize, b);
+	env->GetFloatArrayRegion(rArray, 0, size, r);
+	env->GetFloatArrayRegion(gArray, 0, size, g);
+	env->GetFloatArrayRegion(bArray, 0, size, b);
 
 	return env->ExceptionCheck() == JNI_FALSE;
 }

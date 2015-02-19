@@ -28,7 +28,7 @@ public class Main {
 	}; 
 	
 	public static void main(String[] args) throws IOException {
-		if (Core.open("LetterPlot", 800, 600, 2)) {
+		if (Core.open("LetterPlot", 800, 600, 3)) {
 			System.out.println("open() exited successfully");
 
 			Core.setCursorVisibility(false);

@@ -9,15 +9,11 @@ public final class Core {
 	
 	/**
 	 * <p>This is the main method of the framework. It should be called <em>only once, on
-	 * the main thread</em>. Additionally, if the app is run with the original JRE,
+	 * the main thread</em>. Additionally, if the app is being run with the original JRE,
 	 * you should use <code style="white-space: nowrap;">-XstartOnFirstThread</code> command line option.</p>
 	 * <p>This method opens the main application window which creates a virtual screen 
 	 * (full of beautiful square pixels inside), handles video events (such as screen resizes) and user input
 	 * events (such as mouse movements and keyboard clicks). 
-	 * 
-	 * <h1>Usage example:</h3>
-	 * <p>This code demonstrates the usage of {@link #mainLoop} function. It shows random color noise
-	 * every frame</p>  
 	 * 
 	 * @return <code>true</code> if the loop finished successfully, <code>false</code> otherwise. 
 	 */

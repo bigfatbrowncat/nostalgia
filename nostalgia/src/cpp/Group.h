@@ -10,6 +10,10 @@
 
 #include <stddef.h>
 
+#include <GL3/gl3w.h>
+
+#include <glm/glm.hpp>
+
 struct GroupHandlers
 {
 	virtual bool frameHandler(float* r, float* g, float* b) = 0;

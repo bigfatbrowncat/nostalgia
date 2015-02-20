@@ -67,33 +67,6 @@ CoreHandlers::~CoreHandlers() {
 	env->DeleteGlobalRef(handlerClass);
 }
 
-bool CoreHandlers::resizeHandler(int pointsWidthCount, int pointsHeightCount)
-{
-	env->CallVoidMethod(handler, handlerResizeMethod, pointsWidthCount, pointsHeightCount);
-
-	return env->ExceptionCheck() == JNI_FALSE;
-}
-
-
-bool CoreHandlers::frameHandler(float* r, float* g, float* b)
-{
-	jfloatArray rArray = (jfloatArray)env->GetObjectField(handler, handlerRField);
-	jfloatArray gArray = (jfloatArray)env->GetObjectField(handler, handlerGField);
-	jfloatArray bArray = (jfloatArray)env->GetObjectField(handler, handlerBField);
-
-	jint pointsWidthCount = env->GetIntField(handler, handlerPointsWidthCountField);
-	jint pointsHeightCount = env->GetIntField(handler, handlerPointsHeightCountField);
-
-	int size = pointsWidthCount * pointsHeightCount;
-
-	env->CallVoidMethod(handler, handlerFrameMethod);
-
-	env->GetFloatArrayRegion(rArray, 0, size, r);
-	env->GetFloatArrayRegion(gArray, 0, size, g);
-	env->GetFloatArrayRegion(bArray, 0, size, b);
-
-	return env->ExceptionCheck() == JNI_FALSE;
-}
 
 bool CoreHandlers::mouseMoveHandler(double xPoints, double yPoints)
 {
@@ -118,6 +91,35 @@ bool CoreHandlers::characterHandler(unsigned int character, int mods)
 	env->CallVoidMethod(handler, handlerCharacterMethod, character, mods);
 	return env->ExceptionCheck() == JNI_FALSE;
 }
+
+bool CoreGroupHandlers::resizeHandler(int pointsWidthCount, int pointsHeightCount)
+{
+	env->CallVoidMethod(group, groupResizeMethod, pointsWidthCount, pointsHeightCount);
+
+	return env->ExceptionCheck() == JNI_FALSE;
+}
+
+
+bool CoreGroupHandlers::frameHandler(float* r, float* g, float* b)
+{
+	jfloatArray rArray = (jfloatArray)env->GetObjectField(group, groupRField);
+	jfloatArray gArray = (jfloatArray)env->GetObjectField(group, groupGField);
+	jfloatArray bArray = (jfloatArray)env->GetObjectField(group, groupBField);
+
+	jint pointsWidthCount = env->GetIntField(group, groupPointsWidthCountField);
+	jint pointsHeightCount = env->GetIntField(group, groupPointsHeightCountField);
+
+	int size = pointsWidthCount * pointsHeightCount;
+
+	env->CallVoidMethod(group, groupFrameMethod);
+
+	env->GetFloatArrayRegion(rArray, 0, size, r);
+	env->GetFloatArrayRegion(gArray, 0, size, g);
+	env->GetFloatArrayRegion(bArray, 0, size, b);
+
+	return env->ExceptionCheck() == JNI_FALSE;
+}
+
 
 extern "C"
 {
@@ -162,10 +164,10 @@ extern "C"
 	}
 }
 
-GroupHandlers::GroupHandlers(JNIEnv* env, jobject handler)
+CoreGroupHandlers::CoreGroupHandlers(JNIEnv* env, jobject group)
 {
 	this->env = env;
-	this->handler = env->NewGlobalRef(handler);
+	this->group = env->NewGlobalRef(group);
 
 	jclass hc = env->FindClass(CLASS_GROUP_HANDLER);
 	if (hc == NULL) {
@@ -195,12 +197,12 @@ GroupHandlers::GroupHandlers(JNIEnv* env, jobject handler)
 		std::cout << "JNI problem: can't find " << FIELD_GROUP_HANDLER_B << " field with signature " << FIELD_GROUP_HANDLER_B_SIG << " in class " << CLASS_GROUP_HANDLER;
 	}
 
-	handlerPointsWidthCountField = env->GetFieldID(handlerClass, FIELD_GROUP_HANDLER_POINTS_WIDTH_COUNT, FIELD_GROUP_HANDLER_POINTS_WIDTH_COUNT_SIG);
-	if (handlerPointsWidthCountField == NULL) {
+	groupPointsWidthCountField = env->GetFieldID(groupClass, FIELD_GROUP_HANDLER_POINTS_WIDTH_COUNT, FIELD_GROUP_HANDLER_POINTS_WIDTH_COUNT_SIG);
+	if (groupPointsWidthCountField == NULL) {
 		std::cout << "JNI problem: can't find " << FIELD_GROUP_HANDLER_POINTS_WIDTH_COUNT << " field with signature " << FIELD_GROUP_HANDLER_POINTS_WIDTH_COUNT_SIG << " in class " << CLASS_GROUP_HANDLER;
 	}
-	handlerPointsHeightCountField = env->GetFieldID(handlerClass, FIELD_GROUP_HANDLER_POINTS_HEIGHT_COUNT, FIELD_GROUP_HANDLER_POINTS_HEIGHT_COUNT_SIG);
-	if (handlerPointsHeightCountField == NULL) {
+	groupPointsHeightCountField = env->GetFieldID(groupClass, FIELD_GROUP_HANDLER_POINTS_HEIGHT_COUNT, FIELD_GROUP_HANDLER_POINTS_HEIGHT_COUNT_SIG);
+	if (groupPointsHeightCountField == NULL) {
 		std::cout << "JNI problem: can't find " << FIELD_GROUP_HANDLER_POINTS_HEIGHT_COUNT << " field with signature " << FIELD_GROUP_HANDLER_POINTS_HEIGHT_COUNT_SIG << " in class " << CLASS_GROUP_HANDLER;
 	}
 

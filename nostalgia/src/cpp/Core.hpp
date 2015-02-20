@@ -3,6 +3,7 @@
 
 #include "jni.h"
 
+#include "Group.h"
 #include "main.hpp"
 
 // Core handler implementation
@@ -27,7 +28,7 @@ public:
 	virtual bool characterHandler(unsigned int character, int mods);
 };
 
-class GroupHandlers
+class CoreGroupHandlers : public GroupHandlers
 {
 private:
 	JNIEnv* env;
@@ -40,11 +41,11 @@ private:
 	jfieldID groupPointsWidthCountField;
 	jfieldID groupPointsHeightCountField;
 
-	jobject handler;
+	jobject group;
 
 public:
-	GroupHandlers(JNIEnv* env, jobject group);
-	virtual ~GroupHandlers();
+	CoreGroupHandlers(JNIEnv* env, jobject group);
+	virtual ~CoreGroupHandlers();
 
 	virtual bool resizeHandler(int pointsWidthCount, int pointsHeightCount);
 	virtual bool frameHandler(float* r, float* g, float* b);

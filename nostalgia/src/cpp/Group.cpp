@@ -5,9 +5,13 @@
  *      Author: il
  */
 
+#include <iostream>
 #include <sstream>
+#include <vector>
 
 #include <GL3/gl3w.h>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 #include "Group.h"
 
@@ -70,14 +74,20 @@ static const GLfloat cubeVertexData[] = {
     0.5f,-0.5f, 0.5f
 };*/
 
-Group::Group() {
-	glGenVertexArrays(1, &vertexArray);
-	glBindVertexArray(vertexArray);
+void Group::lazyConstruct() {
+	if (!constructed) {
+		glGenVertexArrays(1, &vertexArray);
+		glBindVertexArray(vertexArray);
 
-	create_shader_program();
+		createShaderProgram();
+		constructed = true;
+	}
 }
 
-void Group::create_shader_program()
+Group::Group() {
+}
+
+void Group::createShaderProgram()
 {
 	stringstream ss;
     ss << "#version 330 core\n";
@@ -104,7 +114,7 @@ void Group::create_shader_program()
     int infoLogLength;
 
     // Compile Vertex Shader
-    cout << "Compiling vertex shader..." << std::endl;
+    std::cout << "Compiling vertex shader..." << std::endl;
     GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShaderID, 1, &vertexSource, NULL);
     glCompileShader(vertexShaderID);
@@ -160,6 +170,7 @@ void Group::create_shader_program()
 
 void Group::makeModel()
 {
+	lazyConstruct();
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 
 	GLfloat* vertexIter = vertexData;
@@ -175,7 +186,8 @@ void Group::makeModel()
 
 			glm::mat4 trans = glm::translate(glm::vec3(-(float)pointsWidthCount / 2 + i + 0.5f, (float)pointsHeightCount / 2 - j - 0.5f, 0.0f));
 
-			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, proportional * trans);
+
+			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, globalMatrix * trans);
 			memcpy(vertexIter, pixelGeometry, cubeVertexDataLength * sizeof(GLfloat));
 			vertexIter += cubeVertexDataLength;
 
@@ -195,12 +207,6 @@ void Group::display()
 {
 	if (buffersAllocated)
 	{
-		if (!(handlers->frameHandler)(r, g, b))
-		{
-			terminatedByException = true;
-		}
-		makeModel();
-
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexData[0], GL_STATIC_DRAW);
 
@@ -247,11 +253,6 @@ void Group::display()
 	}
 }
 
-void Group::setHandlers(GroupHandlers* Handlers)
-{
-	this->handlers = handlers;
-}
-
 void Group::allocateBuffers()
 {
 	glGenBuffers(1, &vertexBuffer);
@@ -269,20 +270,13 @@ void Group::freeBuffers()
 	}
 }
 
-void Group::resize(int w, int h)
+void Group::resize(int pointsWidthCount, int pointsHeightCount)
 {
 	freeBuffers();
 
-	windowWidth = w;
-	windowHeight = h;
+	this->pointsWidthCount = pointsWidthCount;
+	this->pointsHeightCount = pointsHeightCount;
 
-	proportional = glm::scale(glm::vec3(2.0f * pixelsPerPoint / w, 2.0f * pixelsPerPoint / h, 1.0f));
-
-	int w_smaller = (w / pixelsPerPoint) * pixelsPerPoint;
-	int h_smaller = (h / pixelsPerPoint) * pixelsPerPoint;
-
-	pointsWidthCount = (int)((float)w_smaller / pixelsPerPoint) + 2;
-	pointsHeightCount = (int)((float)h_smaller / pixelsPerPoint) + 2;
 	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 	if (vertexData != NULL)
 	{
@@ -302,10 +296,6 @@ void Group::resize(int w, int h)
 	r = new float[pointsWidthCount * pointsHeightCount];
 	g = new float[pointsWidthCount * pointsHeightCount];
 	b = new float[pointsWidthCount * pointsHeightCount];
-
-	if (!(handlers->resizeHandler)(pointsWidthCount, pointsHeightCount)) {
-		terminatedByException = true;
-	}
 
 	allocateBuffers();
 

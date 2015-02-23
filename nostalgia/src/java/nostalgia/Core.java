@@ -5,7 +5,14 @@ public final class Core {
 		System.loadLibrary("nostalgia");
 	}
 	
+	private static boolean opened = false;
+		
 	public static native void setHandler(Handler handler);
+	
+	/**
+	 * Called from {@link Group} class
+	 */
+	static native void setGroup(Group group);
 	
 	/**
 	 * <p>This is the main method of the framework. It should be called <em>only once, on
@@ -17,7 +24,15 @@ public final class Core {
 	 * 
 	 * @return <code>true</code> if the loop finished successfully, <code>false</code> otherwise. 
 	 */
-	public static native boolean run();
+	public static boolean run() {
+		if (opened) {
+			return innerRun();
+		} else {
+			throw new RuntimeException("Window should be opened firstly. Use open()");
+		}
+	}
+
+	public static native boolean innerRun();
 	
 	/**
 	 * Opens the main application window
@@ -27,8 +42,17 @@ public final class Core {
 	 * @param pixelsPerPoint screen pixels per one virtual pixel
 	 * @return <code>true</code> if it's created successively, <code>false</code> otherwise
 	 */
-	public static native boolean open(String title, int windowWidth, int windowHeight, int pixelsPerPoint); 
-	
+	public static boolean open(String title, int windowWidth, int windowHeight, int pixelsPerPoint) {
+		if (innerOpen(title, windowWidth, windowHeight, pixelsPerPoint)) {
+			opened = true;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static native boolean innerOpen(String title, int windowWidth, int windowHeight, int pixelsPerPoint); 
+
 	/**
 	 * Shows or hides the mouse pointer
 	 * @param visible the cursor visibility value

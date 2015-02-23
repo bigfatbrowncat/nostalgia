@@ -3,61 +3,28 @@
 
 #include "jni.h"
 
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
 #include "Group.h"
 #include "main.hpp"
 
-// Core handler implementation
-class CoreHandlers : public Handlers
-{
-private:
-	JNIEnv* env;
-	jclass handlerClass;
-	jmethodID handlerMouseMoveMethod;
-	jmethodID handlerMouseButtonMethod;
-	jmethodID handlerKeyMethod;
-	jmethodID handlerCharacterMethod;
-
-	jobject handler;
-public:
-	CoreHandlers(JNIEnv* env, jobject handler);
-	virtual ~CoreHandlers();
-
-	virtual bool mouseMoveHandler(double xPoints, double yPoints);
-	virtual bool mouseButtonHandler(int button, int action, int mods);
-	virtual bool keyHandler(int key, int scancode, int action, int mods);
-	virtual bool characterHandler(unsigned int character, int mods);
-};
-
-class CoreGroupHandlers : public GroupHandlers
-{
-private:
-	JNIEnv* env;
-	jclass groupClass;
-	jmethodID groupFrameMethod;
-	jmethodID groupResizeMethod;
-	jfieldID groupRField;
-	jfieldID groupGField;
-	jfieldID groupBField;
-	jfieldID groupPointsWidthCountField;
-	jfieldID groupPointsHeightCountField;
-
-	jobject group;
-
-public:
-	CoreGroupHandlers(JNIEnv* env, jobject group);
-	virtual ~CoreGroupHandlers();
-
-	virtual bool resizeHandler(int pointsWidthCount, int pointsHeightCount);
-	virtual bool frameHandler(float* r, float* g, float* b);
-
-};
 
 extern "C"
 {
-	JNIEXPORT void JNICALL Java_nostalgia_Core_setGroup(JNIEnv* env, jclass clz, jobject handler);
+	JNIEXPORT jlong JNICALL Java_nostalgia_Handler_createNative(JNIEnv* env, jobject obj);
+	JNIEXPORT void JNICALL Java_nostalgia_Handler_destroyNative(JNIEnv* env, jobject obj, jlong address);
+	JNIEXPORT jlong JNICALL Java_nostalgia_Group_createNative(JNIEnv* env, jobject obj);
+	JNIEXPORT void JNICALL Java_nostalgia_Group_destroyNative(JNIEnv* env, jobject obj, jlong address);
+
+	JNIEXPORT void JNICALL Java_nostalgia_Group_updateRGB(JNIEnv* env, jobject group);
+	JNIEXPORT void JNICALL Java_nostalgia_Group_innerResize(JNIEnv* env, jobject group, int width, int height);
+	JNIEXPORT void JNICALL Java_nostalgia_Group_display(JNIEnv* env, jobject group);
+
+	JNIEXPORT void JNICALL Java_nostalgia_Core_setGroup(JNIEnv* env, jclass clz, jobject group);
 	JNIEXPORT void JNICALL Java_nostalgia_Core_setHandler(JNIEnv* env, jclass clz, jobject handler);
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz);
-	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_open(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint);
+	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_innerOpen(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint);
 	JNIEXPORT void JNICALL Java_nostalgia_Core_setCursorVisibility(JNIEnv* env, jclass clz, jboolean visible);
 	JNIEXPORT void JNICALL Java_nostalgia_Core_close(JNIEnv* env, jclass clz);
 }

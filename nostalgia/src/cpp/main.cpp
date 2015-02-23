@@ -21,12 +21,14 @@
 
 using namespace std;
 
+bool glInitialized = false;
 int pixelsPerPoint = 5;
 int pointsWidthCount = 0, pointsHeightCount = 0;
 int windowWidth, windowHeight;
+glm::mat4 proportional;
 
 Handlers* theHandlers = NULL;
-Group* theGroup;
+Group* theGroup = NULL;
 GLFWwindow* window;
 bool terminatedByException;
 
@@ -94,7 +96,7 @@ bool glInit()
 void init()
 {
 	// Creating the group
-	theGroup = new Group();
+	//theGroup = new Group();
 
 	// Starting drawing
 	glClearColor(0.0f, 0.0f, 0.0f, 0.f);
@@ -104,11 +106,36 @@ void reshape(GLFWwindow* window, int w, int h)
 {
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 
+	windowWidth = w;
+	windowHeight = h;
+
+	proportional = glm::scale(glm::vec3(2.0f * pixelsPerPoint / w, 2.0f * pixelsPerPoint / h, 1.0f));
+
+	int w_smaller = (w / pixelsPerPoint) * pixelsPerPoint;
+	int h_smaller = (h / pixelsPerPoint) * pixelsPerPoint;
+
+	pointsWidthCount = (int)((float)w_smaller / pixelsPerPoint) + 2;
+	pointsHeightCount = (int)((float)h_smaller / pixelsPerPoint) + 2;
+
+
 	// Resizing the group
-	theGroup->resize(w, h);
+	//theGroup->resize(pointsWidthCount, pointsHeightCount);
+	if (theGroup != NULL) {
+		theGroup->setGlobalMatrix(proportional);
+	}
+
+	if (!(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount)) {
+		terminatedByException = true;
+	}
+
+	if (!(theHandlers->frameHandler)()) {
+		terminatedByException = true;
+	}
 
 	// Displaying the group
-	theGroup->display();
+	/*if (theGroup != NULL) {
+		theGroup->display();
+	}*/
 
 	glfwSwapBuffers(window);
 }
@@ -204,12 +231,18 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
     }
 	glfwSwapInterval(1);
 
+	glInitialized = true;
 	return true;
 }
 
 void closeWindow()
 {
 	glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
+void setGroup(Group* group)
+{
+	::theGroup = group;
 }
 
 void setHandlers(Handlers* handlers)
@@ -222,7 +255,14 @@ void setHandlers(Handlers* handlers)
 
 bool mainLoop()
 {
-	if (theHandlers == NULL) return false;
+	if (!glInitialized) {
+		cerr << "OpenGL isn't initialized";
+		return false;
+	}
+	if (theHandlers == NULL) {
+		cerr << "Handler object isn't assigned";
+		return false;
+	}
 
 	glfwSetTime(0.0);
 
@@ -239,7 +279,14 @@ bool mainLoop()
 		dt = t - tOld;
 		tOld = t;
 
-		theGroup->display();
+		if (!(theHandlers->frameHandler)()) {
+			terminatedByException = true;
+		}
+
+		/*if (theGroup != NULL) {
+			theGroup->display();
+		}*/
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 

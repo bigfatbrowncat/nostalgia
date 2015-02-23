@@ -18,6 +18,7 @@ public abstract class Handler {
 		System.loadLibrary("nostalgia");
 	}
 
+	private boolean freed = false;
 	private long nativeAddress;
 	private native long createNative();
 	private native void destroyNative(long nativeAddress);
@@ -309,8 +310,6 @@ public abstract class Handler {
 	 * <p><em>This variable is used in JNI.
 	 * Don't change the signature</em></p>
 	 */
-	private Bitmap screen;
-	private float[] r, g, b;
 	private int pointsWidthCount, pointsHeightCount;
 	
 	/**
@@ -324,13 +323,13 @@ public abstract class Handler {
 		this.pointsWidthCount = pointsWidthCount;
 		this.pointsHeightCount = pointsHeightCount;
 
-		if (r == null || r.length < pointsWidthCount * pointsHeightCount) 
+		/*if (r == null || r.length < pointsWidthCount * pointsHeightCount) 
 		{
 			r = new float[pointsWidthCount * pointsHeightCount];
 			g = new float[pointsWidthCount * pointsHeightCount];
 			b = new float[pointsWidthCount * pointsHeightCount];
 		}
-		screen = new Bitmap(r, g, b, null, pointsWidthCount, pointsHeightCount);
+		screen = new Bitmap(r, g, b, null, pointsWidthCount, pointsHeightCount);*/
 		sizeChanged();
 	}
 	
@@ -346,7 +345,7 @@ public abstract class Handler {
 	/**
 	 * <p>This method is called by the framework each time when the
 	 * screen size is changed and could be implemented in subclass.</p>
-	 * <p>Use {@link #getScreen()} to determine the current virtual 
+	 * <p>Use {@link #getBitmap()} to determine the current virtual 
 	 * screen size</p>
 	 */
 	public void sizeChanged() { }
@@ -399,11 +398,11 @@ public abstract class Handler {
 	public void key(Key key, int scancode, KeyState state, Modifiers modifiers) { }
 	
 	public void character(char character, Modifiers modifiers) { }
-	
-	/**
-	 * @return The screen bitmap. Draw here to make any changes to the screen.
-	 */
-	public Bitmap getScreen() {
-		return screen;
+
+	public int getPointsWidthCount() {
+		return pointsWidthCount;
+	}
+	public int getPointsHeightCount() {
+		return pointsHeightCount;
 	}
 }

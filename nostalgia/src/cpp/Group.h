@@ -14,28 +14,26 @@
 
 #include <glm/glm.hpp>
 
-struct GroupHandlers
-{
-	virtual bool frameHandler(float* r, float* g, float* b) = 0;
-	virtual bool resizeHandler(int pointsWidthCount, int pointsHeightCount) = 0;
-};
-
 class Group {
 private:
 	GLuint shaderProgram;
 	GLuint vertexArray;
 	bool buffersAllocated = false;
 	GLuint vertexBuffer, colorBuffer;
-	glm::mat4 proportional;
 
 	GLfloat* vertexData = NULL;
 	GLfloat* vertexColorData = NULL;
 	int verticesCount = 0;
+	int pointsWidthCount = 0, pointsHeightCount = 0;
+
+	glm::mat4 globalMatrix;
+
+	bool constructed = false;
+	void lazyConstruct();
+protected:
 	float *r = NULL, *g = NULL, *b = NULL;
 
-	GroupHandlers* handlers;
-protected:
-	void create_shader_program();
+	void createShaderProgram();
 	void makeModel();
 	void allocateBuffers();
 	void freeBuffers();
@@ -50,12 +48,13 @@ protected:
 			vertices[i * 3 + 2] = v.z;
 		}
 	}
+
 public:
 	Group();
 
-	void resize(int w, int h);
+	void resize(int pointsWidthCount, int pointsHeightCount);
 	void display();
-	void setHandlers(GroupHandlers* Handlers);
+	void setGlobalMatrix(const glm::mat4& globalMatrix) { this->globalMatrix = globalMatrix; }
 
 	virtual ~Group();
 };

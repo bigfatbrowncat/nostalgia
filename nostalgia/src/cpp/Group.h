@@ -30,11 +30,8 @@ private:
 
 	bool constructed = false;
 	void lazyConstruct();
-protected:
-	float *r = NULL, *g = NULL, *b = NULL;
 
 	void createShaderProgram();
-	void makeModel();
 	void allocateBuffers();
 	void freeBuffers();
 	inline void applyMatrix(GLfloat vertices[], size_t verticesCount, const glm::mat4& mat)
@@ -48,6 +45,10 @@ protected:
 			vertices[i * 3 + 2] = v.z;
 		}
 	}
+protected:
+	float *r = NULL, *g = NULL, *b = NULL;
+
+	void makeModel();
 
 public:
 	Group();

@@ -24,7 +24,6 @@ public class Group {
 
 	public Group() {
 		nativeAddress = createNative();
-		Core.setGroup(this);
 	}
 
 	@Override

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <set>
 #include <algorithm>
 #include <iostream>
 
@@ -28,7 +29,7 @@ int windowWidth, windowHeight;
 glm::mat4 proportional;
 
 Handlers* theHandlers = NULL;
-Group* theGroup = NULL;
+set<Group*> groups;
 GLFWwindow* window;
 bool terminatedByException;
 
@@ -95,9 +96,6 @@ bool glInit()
 
 void init()
 {
-	// Creating the group
-	//theGroup = new Group();
-
 	// Starting drawing
 	glClearColor(0.0f, 0.0f, 0.0f, 0.f);
 }
@@ -117,11 +115,8 @@ void reshape(GLFWwindow* window, int w, int h)
 	pointsWidthCount = (int)((float)w_smaller / pixelsPerPoint) + 2;
 	pointsHeightCount = (int)((float)h_smaller / pixelsPerPoint) + 2;
 
-
-	// Resizing the group
-	//theGroup->resize(pointsWidthCount, pointsHeightCount);
-	if (theGroup != NULL) {
-		theGroup->setGlobalMatrix(proportional);
+	for (set<Group*>::iterator iter = groups.begin(); iter != groups.end(); iter++) {
+		(*iter)->setGlobalMatrix(proportional);
 	}
 
 	if (!(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount)) {
@@ -132,17 +127,12 @@ void reshape(GLFWwindow* window, int w, int h)
 		terminatedByException = true;
 	}
 
-	// Displaying the group
-	/*if (theGroup != NULL) {
-		theGroup->display();
-	}*/
-
 	glfwSwapBuffers(window);
 }
 
 void cleanup()
 {
-	delete theGroup;
+	groups.clear();
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -240,9 +230,14 @@ void closeWindow()
 	glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-void setGroup(Group* group)
+void addGroup(Group* group)
 {
-	::theGroup = group;
+	groups.insert(group);
+}
+
+void removeGroup(Group* group)
+{
+	groups.erase(group);
 }
 
 void setHandlers(Handlers* handlers)

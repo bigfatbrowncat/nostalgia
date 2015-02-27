@@ -10,11 +10,6 @@ public final class Core {
 	public static native void setHandler(Handler handler);
 	
 	/**
-	 * Called from {@link Group} class
-	 */
-	static native void setGroup(Group group);
-	
-	/**
 	 * <p>This is the main method of the framework. It should be called <em>only once, on
 	 * the main thread</em>. Additionally, if the app is being run with the original JRE,
 	 * you should use <code style="white-space: nowrap;">-XstartOnFirstThread</code> command line option.</p>

@@ -21,7 +21,6 @@ extern "C"
 	JNIEXPORT void JNICALL Java_nostalgia_Group_innerResize(JNIEnv* env, jobject group, int width, int height);
 	JNIEXPORT void JNICALL Java_nostalgia_Group_display(JNIEnv* env, jobject group);
 
-	JNIEXPORT void JNICALL Java_nostalgia_Core_setGroup(JNIEnv* env, jclass clz, jobject group);
 	JNIEXPORT void JNICALL Java_nostalgia_Core_setHandler(JNIEnv* env, jclass clz, jobject handler);
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_run(JNIEnv* env, jclass clz);
 	JNIEXPORT jboolean JNICALL Java_nostalgia_Core_innerOpen(JNIEnv* env, jclass clz, jstring title, jint windowWidth, jint windowHeight, jint pixelsPerPoint);

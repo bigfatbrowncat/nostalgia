@@ -61,13 +61,6 @@ extern "C"
 		delete group;
 	}
 
-	JNIEXPORT void JNICALL Java_nostalgia_Core_setGroup(JNIEnv* env, jclass clz, jobject group)
-	{
-		CoreGroup* cg = extractCoreGroupFromJavaGroup(env, group);
-		std::cout << "Setting CoreGroup: " << cg << std::endl;
-		setGroup(cg);
-	}
-
 	JNIEXPORT void JNICALL Java_nostalgia_Group_updateRGB(JNIEnv* env, jobject group)
 	{
 		extractCoreGroupFromJavaGroup(env, group)->updateRGB();

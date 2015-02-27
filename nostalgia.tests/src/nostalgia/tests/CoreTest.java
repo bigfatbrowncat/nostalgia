@@ -111,16 +111,16 @@ public class CoreTest {
 			}
 			
 			if (state == MouseButtonState.RELEASE && clickedX > ls && clickedX < rs && clickedY > ts && clickedY < bs) {
-				//Core.setHandler(handler2);
+				Core.setHandler(handler2);
 			}
 		}
 	};
 	
-	/*private static Handler handler2 = new Handler() {
+	private static Handler handler2 = new Handler() {
 		private Group group = new Group() {
 			public void display() 
 			{
-				Bitmap screen = getScreen();
+				Bitmap screen = getBitmap();
 				Painter p = new Painter(screen);
 				p.setForeground(null);
 				p.setBackground(new Color(0.5f, 0.5f, 0.5f));
@@ -138,6 +138,8 @@ public class CoreTest {
 				p.drawBitmap(randomPix, 0, 0);
 				p.drawBitmap(cursor, mouseX, mouseY);
 				
+				updateRGB();
+
 				super.display();
 			}
 		};
@@ -162,11 +164,9 @@ public class CoreTest {
 				Core.setHandler(handler1);
 			}
 		}
-	};*/
+	};
 	
 	public static void main(String[] args) {
-		
-
 		
 		if (Core.open("JNILayerTest MainWindow", 800, 600, 2)) {
 			Core.setCursorVisibility(false);

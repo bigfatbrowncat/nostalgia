@@ -16,7 +16,8 @@ struct Handlers
 };
 
 bool createWindow(const char* title, int windowWidth, int windowHeight, int pixelsPerPoint);
-void setGroup(Group* group);
+void addGroup(Group* group);
+void removeGroup(Group* group);
 void setHandlers(Handlers* handlers);
 bool mainLoop();
 void closeWindow();

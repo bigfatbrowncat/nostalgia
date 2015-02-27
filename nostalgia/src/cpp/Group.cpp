@@ -13,6 +13,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include "main.hpp"
 #include "Group.h"
 
 using namespace std;
@@ -85,6 +86,7 @@ void Group::lazyConstruct() {
 }
 
 Group::Group() {
+	addGroup(this);
 }
 
 void Group::createShaderProgram()
@@ -302,6 +304,8 @@ void Group::resize(int pointsWidthCount, int pointsHeightCount)
 }
 
 Group::~Group() {
+	removeGroup(this);
+
 	freeBuffers();
 
 	glDeleteVertexArrays(1, &vertexArray);

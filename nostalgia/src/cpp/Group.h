@@ -25,6 +25,7 @@ private:
 	GLfloat* vertexColorData = NULL;
 	int verticesCount = 0;
 	int pointsWidthCount = 0, pointsHeightCount = 0;
+	int screenWidth, screenHeight;
 
 	glm::mat4 globalMatrix;
 
@@ -55,8 +56,12 @@ public:
 
 	void resize(int pointsWidthCount, int pointsHeightCount);
 	virtual void draw() = 0;
-	void display();
+	void display(float x, float y);
 	void setGlobalMatrix(const glm::mat4& globalMatrix) { this->globalMatrix = globalMatrix; }
+	void setScreenSize(int width, int height) {
+		this->screenWidth = width;
+		this->screenHeight = height;
+	}
 
 	virtual ~Group();
 };

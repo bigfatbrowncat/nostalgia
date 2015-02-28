@@ -93,11 +93,12 @@ void Group::createShaderProgram()
 {
 	stringstream ss;
     ss << "#version 330 core\n";
+    ss << "uniform mat4 globalTrans;\n";
     ss << "layout(location = " << VERTEX_INDEX << ") in vec3 vertex;\n";
     ss << "layout(location = " << COLOR_INDEX << ") in vec3 vertexColor;\n";
     ss << "out vec3 fragmentColor;\n";
     ss << "void main() {\n";
-    ss << "    gl_Position.xyz = vertex;\n";
+    ss << "    gl_Position = globalTrans * vec4(vertex, 1.0);\n";
     ss << "    gl_Position.w = 1.0;\n";
     ss << "    fragmentColor = vertexColor;\n";
     ss << "}\n";
@@ -186,10 +187,9 @@ void Group::makeModel()
 			GLfloat pixelGeometry[cubeVertexDataLength];
 			memcpy(pixelGeometry, cubeVertexData, cubeVertexDataLength * sizeof(GLfloat));
 
-			glm::mat4 trans = glm::translate(glm::vec3(-(float)pointsWidthCount / 2 + i + 0.5f, (float)pointsHeightCount / 2 - j - 0.5f, 0.0f));
+			glm::mat4 trans = glm::translate(glm::vec3(-(float)screenWidth / 2 + i + 0.5f, (float)screenHeight / 2 - j - 0.5f, 0.0f));
 
-
-			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, globalMatrix * trans);
+			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, trans);
 			memcpy(vertexIter, pixelGeometry, cubeVertexDataLength * sizeof(GLfloat));
 			vertexIter += cubeVertexDataLength;
 
@@ -205,16 +205,20 @@ void Group::makeModel()
 	}
 }
 
-void Group::display()
+void Group::display(float x, float y)
 {
 	if (buffersAllocated)
 	{
+		glm::mat4 globalTrans = globalMatrix * glm::translate(glm::vec3(x, -y, 0.0f));
+
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexData[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexColorData[0], GL_STATIC_DRAW);
 
+		glUseProgram(shaderProgram);
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "globalTrans"), 1, GL_FALSE, glm::value_ptr(globalTrans));
 		glEnableVertexAttribArray(VERTEX_INDEX);
 		glEnableVertexAttribArray(COLOR_INDEX);
 
@@ -242,8 +246,7 @@ void Group::display()
 			);
 		}
 
-		glUseProgram(shaderProgram);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLES, 0, verticesCount);
 
 		glDisableVertexAttribArray(VERTEX_INDEX);

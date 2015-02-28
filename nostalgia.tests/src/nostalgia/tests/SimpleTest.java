@@ -16,7 +16,7 @@ public class SimpleTest {
 		
 		@Override
 		public void frame() {
-			group1.display();
+			group1.display(1, 1);
 		}
 	};
 

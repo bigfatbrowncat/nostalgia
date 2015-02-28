@@ -111,5 +111,5 @@ public class Group {
 		innerResize(width, height);
 	}
 	
-	public native void display();
+	public native void display(float x, float y);
 }

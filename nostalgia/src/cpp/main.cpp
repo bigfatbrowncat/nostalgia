@@ -97,7 +97,7 @@ bool glInit()
 void init()
 {
 	// Starting drawing
-	glClearColor(0.0f, 0.0f, 0.0f, 0.f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.f);
 }
 
 void reshape(GLFWwindow* window, int w, int h)
@@ -117,6 +117,7 @@ void reshape(GLFWwindow* window, int w, int h)
 
 	for (set<Group*>::iterator iter = groups.begin(); iter != groups.end(); iter++) {
 		(*iter)->setGlobalMatrix(proportional);
+		(*iter)->setScreenSize(pointsWidthCount, pointsHeightCount);
 	}
 
 	if (!(theHandlers->resizeHandler)(pointsWidthCount, pointsHeightCount)) {
@@ -126,6 +127,9 @@ void reshape(GLFWwindow* window, int w, int h)
 	for (set<Group*>::iterator iter = groups.begin(); iter != groups.end(); iter++) {
 		(*iter)->draw();
 	}
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
 
 	if (!(theHandlers->frameHandler)()) {
 		terminatedByException = true;
@@ -281,6 +285,9 @@ bool mainLoop()
 		for (set<Group*>::iterator iter = groups.begin(); iter != groups.end(); iter++) {
 			(*iter)->draw();
 		}
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.f, 0.f, 0.f, 1.f);
 
 		if (!(theHandlers->frameHandler)()) {
 			terminatedByException = true;

@@ -120,7 +120,7 @@ public abstract class BaseHandler extends Handler {
 	
 	@Override
 	public void frame() {
-		mainGroup.display();
+		mainGroup.display(0, 0);
 	}
 	
 	protected Boolean getDrawingColor() {

@@ -66,9 +66,9 @@ extern "C"
 		extractCoreGroupFromJavaGroup(env, group)->resize(width, height);
 	}
 
-	JNIEXPORT void JNICALL Java_nostalgia_Group_display(JNIEnv* env, jobject group)
+	JNIEXPORT void JNICALL Java_nostalgia_Group_display(JNIEnv* env, jobject group, float x, float y)
 	{
-		extractCoreGroupFromJavaGroup(env, group)->display();
+		extractCoreGroupFromJavaGroup(env, group)->display(x, y);
 	}
 
 	JNIEXPORT void JNICALL Java_nostalgia_Core_setHandler(JNIEnv* env, jclass clz, jobject handler)

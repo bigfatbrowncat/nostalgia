@@ -323,13 +323,6 @@ public abstract class Handler {
 		this.pointsWidthCount = pointsWidthCount;
 		this.pointsHeightCount = pointsHeightCount;
 
-		/*if (r == null || r.length < pointsWidthCount * pointsHeightCount) 
-		{
-			r = new float[pointsWidthCount * pointsHeightCount];
-			g = new float[pointsWidthCount * pointsHeightCount];
-			b = new float[pointsWidthCount * pointsHeightCount];
-		}
-		screen = new Bitmap(r, g, b, null, pointsWidthCount, pointsHeightCount);*/
 		sizeChanged();
 	}
 	

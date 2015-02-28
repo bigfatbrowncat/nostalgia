@@ -11,10 +11,10 @@
 #define FIELD_GROUP_G_SIG					"[F"
 #define FIELD_GROUP_B						"b"
 #define FIELD_GROUP_B_SIG					"[F"
-#define FIELD_GROUP_POINTS_WIDTH_COUNT		"pointsWidthCount"
-#define FIELD_GROUP_POINTS_WIDTH_COUNT_SIG	"I"
-#define FIELD_GROUP_POINTS_HEIGHT_COUNT		"pointsHeightCount"
-#define FIELD_GROUP_POINTS_HEIGHT_COUNT_SIG	"I"
+#define FIELD_GROUP_WIDTH		"width"
+#define FIELD_GROUP_WIDTH_SIG	"I"
+#define FIELD_GROUP_HEIGHT		"height"
+#define FIELD_GROUP_HEIGHT_SIG	"I"
 
 #define METHOD_GROUP_DRAW			"innerDraw"
 #define METHOD_GROUP_DRAW_SIG		"()Z"
@@ -45,13 +45,13 @@ CoreGroup::CoreGroup(JNIEnv* env, jobject group)
 		std::cout << "JNI problem: can't find " << FIELD_GROUP_B << " field with signature " << FIELD_GROUP_B_SIG << " in class " << CLASS_GROUP;
 	}
 
-	groupPointsWidthCountField = env->GetFieldID(groupClass, FIELD_GROUP_POINTS_WIDTH_COUNT, FIELD_GROUP_POINTS_WIDTH_COUNT_SIG);
+	groupPointsWidthCountField = env->GetFieldID(groupClass, FIELD_GROUP_WIDTH, FIELD_GROUP_WIDTH_SIG);
 	if (groupPointsWidthCountField == NULL) {
-		std::cout << "JNI problem: can't find " << FIELD_GROUP_POINTS_WIDTH_COUNT << " field with signature " << FIELD_GROUP_POINTS_WIDTH_COUNT_SIG << " in class " << CLASS_GROUP;
+		std::cout << "JNI problem: can't find " << FIELD_GROUP_WIDTH << " field with signature " << FIELD_GROUP_WIDTH_SIG << " in class " << CLASS_GROUP;
 	}
-	groupPointsHeightCountField = env->GetFieldID(groupClass, FIELD_GROUP_POINTS_HEIGHT_COUNT, FIELD_GROUP_POINTS_HEIGHT_COUNT_SIG);
+	groupPointsHeightCountField = env->GetFieldID(groupClass, FIELD_GROUP_HEIGHT, FIELD_GROUP_HEIGHT_SIG);
 	if (groupPointsHeightCountField == NULL) {
-		std::cout << "JNI problem: can't find " << FIELD_GROUP_POINTS_HEIGHT_COUNT << " field with signature " << FIELD_GROUP_POINTS_HEIGHT_COUNT_SIG << " in class " << CLASS_GROUP;
+		std::cout << "JNI problem: can't find " << FIELD_GROUP_HEIGHT << " field with signature " << FIELD_GROUP_HEIGHT_SIG << " in class " << CLASS_GROUP;
 	}
 
 	groupDrawMethod = env->GetMethodID(groupClass, METHOD_GROUP_DRAW, METHOD_GROUP_DRAW_SIG);

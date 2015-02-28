@@ -19,8 +19,8 @@ public class Group {
 
 	public Group(int width, int height) {
 		nativeAddress = createNative();
-		pointsWidthCount = width;
-		pointsHeightCount = height;
+		this.width = width;
+		this.height = height;
 	}
 
 	@Override
@@ -49,9 +49,9 @@ public class Group {
 	 * <p><em>This variable is used in JNI.
 	 * Don't change the signature</em></p>
 	 */
-	private int pointsWidthCount, pointsHeightCount;
+	private int width, height;
 	
-	private boolean initial = true;
+	private boolean forcedDraw = true;
 	
 	/**
 	 * <p><em>This method is called from JNI.
@@ -59,13 +59,13 @@ public class Group {
 	 */
 	private boolean innerDraw() {
 		if (bitmap == null) {
-			resize(pointsWidthCount, pointsHeightCount);
+			resize(width, height);
 		}
 		if (painter == null || painter.getBitmap() != bitmap) {
 			painter = new Painter(bitmap);
 		}
-		boolean res = draw(painter, initial);
-		initial = false;
+		boolean res = draw(painter, forcedDraw);
+		forcedDraw = false;
 		return res;
 	}
 	
@@ -73,11 +73,11 @@ public class Group {
 	 * <p>This function should be implemented in a {@link Group} subclass in order to paint its
 	 * contents. All the painting code should be placed here. Don't pass the <code>painter</code>
 	 * object outside since it is controlled entirely by the framework and nothing guaranteed
-	 * about its state outside of this function.</p>
+	 * about its state outside this function.</p>
 	 * <p>If you want to operate on the screen bitmap directly, use {@link Painter#getBitmap Painter.getBitmap()}
 	 * function. But don't pass the returned {@link Bitmap} object out of the function as well.</p>
 	 * @param painter a {@link Painter} that should be used to draw the contents
-	 * @param forced this flag is <code>true</code> if the screen was changed somehow 
+	 * @param forced this flag is <code>true</code> if the buffer bitmap has been invalidated somehow 
 	 * (for instance if its size was changed) and the object has to redraw itself.  
 	 * @return The subclass should return <code>true</code> if it has changed something
 	 * in the image and wants to commit the changes. Return <code>false</code> if you haven't painted
@@ -90,9 +90,9 @@ public class Group {
 	private native void innerResize(int width, int height);
 	
 	public void resize(int width, int height) {
-		initial = true;
-		pointsWidthCount = width;
-		pointsHeightCount = height;
+		forcedDraw = true;
+		this.width = width;
+		this.height = height;
 		
 		if (bitmap == null) {
 			bitmap = Bitmap.createWithoutAlpha(width, height);

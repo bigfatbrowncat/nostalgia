@@ -46,7 +46,7 @@ public class CoreTest {
 		private Group group = new Group(80, 60) {
 			
 			@Override
-			public boolean draw(Painter p, boolean initial) {
+			public boolean draw(Painter p, boolean forced) {
 				Bitmap bitmap = p.getBitmap();
 				p.setForeground(null);
 				p.setBackground(new Color(0.5f, 0.5f, 0.5f));

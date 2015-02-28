@@ -16,8 +16,9 @@ public abstract class MainHandler extends BaseHandler {
 		}
 		
 		@Override
-		public boolean draw(Bitmap bitmap, boolean initial) {
-			super.draw(bitmap, initial);
+		public boolean draw(Painter painter, boolean forced) {
+			super.draw(painter, forced);
+			Bitmap bitmap = painter.getBitmap();
 
 			Painter p = new Painter(bitmap);
 			

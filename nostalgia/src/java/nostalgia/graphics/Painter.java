@@ -170,6 +170,10 @@ public class Painter {
 		}
 	}
 	
+	public Bitmap getBitmap() {
+		return bitmap;
+	}
+	
 	public Color getForeground() {
 		return foreground;
 	}

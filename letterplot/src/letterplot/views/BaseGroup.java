@@ -157,8 +157,9 @@ public class BaseGroup extends Group {
 	}
 	
 	@Override
-	public boolean draw(Bitmap bitmap, boolean initial) {
-		if (initial) {
+	public boolean draw(Painter painter, boolean forced) {
+		Bitmap bitmap = painter.getBitmap();
+		if (forced) {
 			int widthAligned = bitmap.getWidth() - paddingLeft - paddingRight;
 			int heightAligned = bitmap.getHeight() - paddingTop - paddingBottom;
 

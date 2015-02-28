@@ -1,14 +1,12 @@
 package nostalgia;
 
 import nostalgia.graphics.Bitmap;
+import nostalgia.graphics.Painter;
 
 /**
  * <p><em>This class is called from JNI.
  * Don't change the signature</em></p>
- * <p>This class is used for handling events of the framework main event loop.</p>
- * <p>You should subclass it, create an instance (you can do it inline) and pass this
- * instance to {@link Core#mainLoop JNILayer.mainLoop()}</p>
- * @see {@link Core#mainLoop JNILayer.mainLoop()}
+ * <p>This class is used for drawing something </p>
  */
 public class Group {
 	static {
@@ -39,6 +37,7 @@ public class Group {
 	 * Don't change the signature</em></p>
 	 */
 	private Bitmap bitmap;
+	private Painter painter;
 	
 	/**
 	 * <p><em>This variable is used in JNI.
@@ -62,12 +61,29 @@ public class Group {
 		if (bitmap == null) {
 			resize(pointsWidthCount, pointsHeightCount);
 		}
-		boolean res = draw(bitmap, initial);
+		if (painter == null || painter.getBitmap() != bitmap) {
+			painter = new Painter(bitmap);
+		}
+		boolean res = draw(painter, initial);
 		initial = false;
 		return res;
 	}
 	
-	public boolean draw(Bitmap bitmap, boolean initial) {
+	/**
+	 * <p>This function should be implemented in a {@link Group} subclass in order to paint its
+	 * contents. All the painting code should be placed here. Don't pass the <code>painter</code>
+	 * object outside since it is controlled entirely by the framework and nothing guaranteed
+	 * about its state outside of this function.</p>
+	 * <p>If you want to operate on the screen bitmap directly, use {@link Painter#getBitmap Painter.getBitmap()}
+	 * function. But don't pass the returned {@link Bitmap} object out of the function as well.</p>
+	 * @param painter a {@link Painter} that should be used to draw the contents
+	 * @param forced this flag is <code>true</code> if the screen was changed somehow 
+	 * (for instance if its size was changed) and the object has to redraw itself.  
+	 * @return The subclass should return <code>true</code> if it has changed something
+	 * in the image and wants to commit the changes. Return <code>false</code> if you haven't painted
+	 * anything (that will avoid expensive image rebuilding and boost performance). 
+	 */
+	public boolean draw(Painter painter, boolean forced) {
 		return false;
 	}
 	

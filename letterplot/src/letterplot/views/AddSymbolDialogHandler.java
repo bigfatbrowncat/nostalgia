@@ -14,8 +14,9 @@ public abstract class AddSymbolDialogHandler extends BaseHandler {
 		}
 		
 		@Override
-		public boolean draw(Bitmap bitmap, boolean initial) {
-			super.draw(bitmap, initial);
+		public boolean draw(Painter painter, boolean initial) {
+			super.draw(painter, initial);
+			Bitmap bitmap = painter.getBitmap();
 			
 			drawMainScreen(bitmap, false);
 

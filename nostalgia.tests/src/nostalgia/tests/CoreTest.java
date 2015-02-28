@@ -46,9 +46,8 @@ public class CoreTest {
 		private Group group = new Group(80, 60) {
 			
 			@Override
-			public boolean draw(Bitmap bitmap, boolean initial) 
-			{
-				Painter p = new Painter(bitmap);
+			public boolean draw(Painter p, boolean initial) {
+				Bitmap bitmap = p.getBitmap();
 				p.setForeground(null);
 				p.setBackground(new Color(0.5f, 0.5f, 0.5f));
 				p.drawRectangle(0, 0, bitmap.getWidth() - 1, bitmap.getHeight() - 1);
@@ -110,8 +109,8 @@ public class CoreTest {
 	private static Handler handler2 = new Handler() {
 		private Group group = new Group(80, 60) {
 			@Override
-			public boolean draw(Bitmap bitmap, boolean initial) {
-				Painter p = new Painter(bitmap);
+			public boolean draw(Painter p, boolean initial) {
+				Bitmap bitmap = p.getBitmap();
 				p.setForeground(null);
 				p.setBackground(new Color(0.5f, 0.5f, 0.5f));
 				p.drawRectangle(0, 0, bitmap.getWidth() - 1, bitmap.getHeight() - 1);

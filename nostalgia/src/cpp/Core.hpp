@@ -17,7 +17,6 @@ extern "C"
 	JNIEXPORT jlong JNICALL Java_nostalgia_Group_createNative(JNIEnv* env, jobject obj);
 	JNIEXPORT void JNICALL Java_nostalgia_Group_destroyNative(JNIEnv* env, jobject obj, jlong address);
 
-	JNIEXPORT void JNICALL Java_nostalgia_Group_updateRGB(JNIEnv* env, jobject group);
 	JNIEXPORT void JNICALL Java_nostalgia_Group_innerResize(JNIEnv* env, jobject group, int width, int height);
 	JNIEXPORT void JNICALL Java_nostalgia_Group_display(JNIEnv* env, jobject group);
 

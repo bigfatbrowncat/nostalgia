@@ -7,28 +7,40 @@ import nostalgia.graphics.Bitmap;
 import nostalgia.graphics.Painter;
 
 public abstract class MainHandler extends BaseHandler {
+	protected static String pangram = "Sphinx of black quartz, judge my vow.";
 
+	private class MainGroup extends BaseGroup {
+
+		public MainGroup() {
+			super(100, 100, getData());
+		}
+		
+		@Override
+		public boolean draw(Bitmap bitmap, boolean initial) {
+			super.draw(bitmap, initial);
+
+			Painter p = new Painter(bitmap);
+			
+			drawMainScreen(bitmap, true);
+			
+			String[] hotKeyDesc = new String[] { "Exit", "New", "Save", "Load", "AddS", "RemS" };
+			drawHotkeys(bitmap, hotKeyDesc);
+			
+			// Drawing mouse cursor at last
+			p.drawBitmap(Constants.ARROW_CURSOR, getMouseX(), getMouseY());
+			
+			return true;
+		}
+	}
+	
 	public MainHandler(Data data) {
 		super(data);
-		// TODO Auto-generated constructor stub
+		setMainGroup(new MainGroup());
+		getMainGroup().setPangram(pangram);
 	}
 
 	protected abstract void showAddSymbolDialog();
-	
-	@Override
-	public void frame() {
-		Bitmap screen = getScreen();
-		Painter p = new Painter(screen);
 		
-		drawMainScreen(true);
-		
-		String[] hotKeyDesc = new String[] { "Exit", "New", "Save", "Load", "AddS", "RemS" };
-		drawHotkeys(screen, hotKeyDesc);
-		
-		// Drawing mouse cursor at last
-		p.drawBitmap(Constants.ARROW_CURSOR, getMouseX(), getMouseY());
-	}
-	
 	@Override
 	public void key(Key key, int scancode, KeyState state, Modifiers modifiers) {
 		if (key == Key.ESCAPE && state == KeyState.PRESS && modifiers.isEmpty()) {
@@ -79,6 +91,7 @@ public abstract class MainHandler extends BaseHandler {
 			if (!pangram.equals("")) {
 				pangram = pangram.substring(0, pangram.length() - 1);
 			}
+			getMainGroup().setPangram(pangram);
 		}
 
 	}
@@ -87,6 +100,7 @@ public abstract class MainHandler extends BaseHandler {
 	public void character(char character, Modifiers modifiers) {
 		if (modifiers.isEmpty() || modifiers.equals(Modifiers.of(Modifier.SHIFT))) {
 			pangram += character;
+			getMainGroup().setPangram(pangram);
 		}
 	}
 	
@@ -95,9 +109,9 @@ public abstract class MainHandler extends BaseHandler {
 		if (button == MouseButton.LEFT) {
 			if (state == MouseButtonState.PRESS) {
 				boolean[] currentLetter = getData().getEditingFont().getSymbol(getData().getCurrentChar());
-				if (isInCells(getMouseX(), getMouseY())) {
-					int i = cellX(getMouseX()); 
-					int j = cellY(getMouseY());
+				if (getMainGroup().isInCells(getMouseX(), getMouseY())) {
+					int i = getMainGroup().cellX(getMouseX()); 
+					int j = getMainGroup().cellY(getMouseY());
 					currentLetter[j * getData().getEditingFont().getWidth() + i] = !currentLetter[j * getData().getEditingFont().getWidth() + i];
 					setDrawingColor(currentLetter[j * getData().getEditingFont().getWidth() + i]);
 				}

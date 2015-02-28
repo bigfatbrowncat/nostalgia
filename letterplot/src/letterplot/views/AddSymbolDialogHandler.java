@@ -7,65 +7,74 @@ import nostalgia.graphics.Painter;
 
 public abstract class AddSymbolDialogHandler extends BaseHandler {
 
-	protected abstract void showMainScreen();
+	private class AddSymbolDialogGroup extends BaseGroup {
 
-	public AddSymbolDialogHandler(Data data) {
-		super(data);
-	}
-
-	@Override
-	public void frame() {
-		Bitmap screen = getScreen();
-		Painter p = new Painter(screen);
-
-		drawMainScreen(false);
-
-		Painter p2 = new Painter(screen);
-		p2.setBackground(Constants.DIALOG_BACK_COLOR);
-		p2.setForeground(null);
-		p2.drawRectangle(0, 0, screen.getWidth(), screen.getHeight());
+		public AddSymbolDialogGroup() {
+			super(100, 100, getData());
+		}
 		
-		String addSymbolsTitle = "Add symbols to the font";
-		String[] addSymbolsDescription = new String[] {
-				"Type here the unicode character index",
-				"as 4 digits in hexadecimal format (like 01AB or FFFF).",
-				"You can also type '-' after some digits, to create",
-				"a range of codes (like 0410-042F)"
-		};
+		@Override
+		public boolean draw(Bitmap bitmap, boolean initial) {
+			super.draw(bitmap, initial);
+			
+			drawMainScreen(bitmap, false);
 
-		p2.setFont(Constants.SYSTEM_FONT);
-		p2.setForeground(Constants.FORE_HIGHLIGHT_COLOR);
-		int y0 = screen.getHeight() / 2 - 7 * p2.getFont().getHeight();
-		int x0 = screen.getWidth() / 2 - p2.stringWidth(addSymbolsTitle) / 2;
-		p2.drawString(x0, y0, addSymbolsTitle);
+			Painter p2 = new Painter(bitmap);
+			p2.setBackground(Constants.DIALOG_BACK_COLOR);
+			p2.setForeground(null);
+			p2.drawRectangle(0, 0, bitmap.getWidth(), bitmap.getHeight());
+			
+			String addSymbolsTitle = "Add symbols to the font";
+			String[] addSymbolsDescription = new String[] {
+					"Type here the unicode character index",
+					"as 4 digits in hexadecimal format (like 01AB or FFFF).",
+					"You can also type '-' after some digits, to create",
+					"a range of codes (like 0410-042F)"
+			};
 
-		p2.setForeground(Constants.FORE_COLOR);
-		y0 += p2.getFont().getHeight();
+			p2.setFont(Constants.SYSTEM_FONT);
+			p2.setForeground(Constants.FORE_HIGHLIGHT_COLOR);
+			int y0 = bitmap.getHeight() / 2 - 7 * p2.getFont().getHeight();
+			int x0 = bitmap.getWidth() / 2 - p2.stringWidth(addSymbolsTitle) / 2;
+			p2.drawString(x0, y0, addSymbolsTitle);
 
-		for (int i = 0; i < addSymbolsDescription.length; i++) {
-			x0 = screen.getWidth() / 2 - p2.stringWidth(addSymbolsDescription[i]) / 2;
+			p2.setForeground(Constants.FORE_COLOR);
 			y0 += p2.getFont().getHeight();
-			p2.drawString(x0, y0, addSymbolsDescription[i]);
-		}
-		
-		String formattedRange = formatHexCodeOrRange(addSymbolHexCodeInput, 4);
-		x0 = screen.getWidth() / 2 - p2.stringWidth(formattedRange) / 2;
-		y0 += p2.getFont().getHeight() * 3;
-		p2.drawString(x0, y0, formattedRange);
-		
-		int addDigstextCurX = x0 + getData().getEditingFont().getWidth() * formattedRange.length();
-		if (textCurVisible) { 
-			p.setForeground(null);
-			p.setBackground(Constants.FORE_COLOR);
-			p.drawRectangle(addDigstextCurX - getData().getEditingFont().getWidth(), y0, addDigstextCurX, y0 + getData().getEditingFont().getHeight());
-		}
 
-		String[] hotKeys = new String[] { "  Esc", "Enter" };
-		String[] hotKeyDesc = new String[] { "Cancel", "OK" };
+			for (int i = 0; i < addSymbolsDescription.length; i++) {
+				x0 = bitmap.getWidth() / 2 - p2.stringWidth(addSymbolsDescription[i]) / 2;
+				y0 += p2.getFont().getHeight();
+				p2.drawString(x0, y0, addSymbolsDescription[i]);
+			}
+			
+			String formattedRange = formatHexCodeOrRange(addSymbolHexCodeInput, 4);
+			x0 = bitmap.getWidth() / 2 - p2.stringWidth(formattedRange) / 2;
+			y0 += p2.getFont().getHeight() * 3;
+			p2.drawString(x0, y0, formattedRange);
+			
+			int addDigstextCurX = x0 + getData().getEditingFont().getWidth() * formattedRange.length();
+			if (isTextCurVisible()) { 
+				p2.setForeground(null);
+				p2.setBackground(Constants.FORE_COLOR);
+				p2.drawRectangle(addDigstextCurX - getData().getEditingFont().getWidth(), y0, addDigstextCurX, y0 + getData().getEditingFont().getHeight());
+			}
+
+			String[] hotKeys = new String[] { "  Esc", "Enter" };
+			String[] hotKeyDesc = new String[] { "Cancel", "OK" };
+			
+			drawHotkeys(bitmap, hotKeys, hotKeyDesc);
+			return true;
+		}
 		
-		drawHotkeys(screen, hotKeys, hotKeyDesc);
 	}
 	
+	protected abstract void showMainScreen();
+	
+	public AddSymbolDialogHandler(Data data) {
+		super(data);
+		setMainGroup(new AddSymbolDialogGroup());
+	}
+
 	@Override
 	public void key(Key key, int scancode, KeyState state, Modifiers modifiers) {
 		if (key == Key.ESCAPE && state == KeyState.PRESS && modifiers.isEmpty()) {

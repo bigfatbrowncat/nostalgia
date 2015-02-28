@@ -43,25 +43,18 @@ public class CoreTest {
 		private int ls, ts, rs, bs;
 		private int clickedX, clickedY;
 		
-		private Group group = new Group() {
+		private Group group = new Group(80, 60) {
 			
 			@Override
-			public void resize(int width, int height) {
-
-				super.resize(width, height);
-			}
-			
-			public void display() 
+			public boolean draw(Bitmap bitmap, boolean initial) 
 			{
-				Bitmap screen = getBitmap();
-				
-				Painter p = new Painter(screen);
+				Painter p = new Painter(bitmap);
 				p.setForeground(null);
 				p.setBackground(new Color(0.5f, 0.5f, 0.5f));
-				p.drawRectangle(0, 0, screen.getWidth() - 1, screen.getHeight() - 1);
+				p.drawRectangle(0, 0, bitmap.getWidth() - 1, bitmap.getHeight() - 1);
 				
-				ls = screen.getWidth() / 2 - 30; rs = screen.getWidth() / 2 + 30;
-				ts = screen.getHeight() / 2 - 25; bs = screen.getHeight() / 2 + 25; 
+				ls = bitmap.getWidth() / 2 - 30; rs = bitmap.getWidth() / 2 + 30;
+				ts = bitmap.getHeight() / 2 - 25; bs = bitmap.getHeight() / 2 + 25; 
 				
 				Bitmap randomPix = Bitmap.createWithoutAlpha(rs - ls, bs - ts); 
 				float[] r = randomPix.getR(), g = randomPix.getG(), b = randomPix.getB();
@@ -82,10 +75,8 @@ public class CoreTest {
 				p.drawLine(20, 120, 120, 140);
 				p.drawLine(20, 140, 120, 120);
 				p.drawLine(60, 10, 100, 50);
-
-				updateRGB();
-
-				super.display();
+				
+				return true;
 			}
 		};
 		
@@ -117,16 +108,15 @@ public class CoreTest {
 	};
 	
 	private static Handler handler2 = new Handler() {
-		private Group group = new Group() {
-			public void display() 
-			{
-				Bitmap screen = getBitmap();
-				Painter p = new Painter(screen);
+		private Group group = new Group(80, 60) {
+			@Override
+			public boolean draw(Bitmap bitmap, boolean initial) {
+				Painter p = new Painter(bitmap);
 				p.setForeground(null);
 				p.setBackground(new Color(0.5f, 0.5f, 0.5f));
-				p.drawRectangle(0, 0, screen.getWidth() - 1, screen.getHeight() - 1);
+				p.drawRectangle(0, 0, bitmap.getWidth() - 1, bitmap.getHeight() - 1);
 				
-				Bitmap randomPix = Bitmap.createWithoutAlpha(screen.getWidth(), screen.getHeight()); 
+				Bitmap randomPix = Bitmap.createWithoutAlpha(bitmap.getWidth(), bitmap.getHeight()); 
 				float[] r = randomPix.getR(), g = randomPix.getG(), b = randomPix.getB();
 				for (int i = 0; i < randomPix.getWidth(); i++) {
 					for (int j = 0; j < randomPix.getHeight(); j++) {
@@ -137,10 +127,7 @@ public class CoreTest {
 				}
 				p.drawBitmap(randomPix, 0, 0);
 				p.drawBitmap(cursor, mouseX, mouseY);
-				
-				updateRGB();
-
-				super.display();
+				return true;
 			}
 		};
 		

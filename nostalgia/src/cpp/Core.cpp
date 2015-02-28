@@ -61,11 +61,6 @@ extern "C"
 		delete group;
 	}
 
-	JNIEXPORT void JNICALL Java_nostalgia_Group_updateRGB(JNIEnv* env, jobject group)
-	{
-		extractCoreGroupFromJavaGroup(env, group)->updateRGB();
-	}
-
 	JNIEXPORT void JNICALL Java_nostalgia_Group_innerResize(JNIEnv* env, jobject group, int width, int height)
 	{
 		extractCoreGroupFromJavaGroup(env, group)->resize(width, height);

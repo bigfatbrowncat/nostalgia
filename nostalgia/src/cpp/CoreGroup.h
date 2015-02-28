@@ -21,11 +21,17 @@ private:
 	jfieldID groupPointsWidthCountField;
 	jfieldID groupPointsHeightCountField;
 
+	jmethodID groupDrawMethod;
 	jobject group;
 
 public:
 	CoreGroup(JNIEnv* env, jobject group);
 	bool updateRGB();
+	virtual void draw() {
+		if (env->CallBooleanMethod(group, groupDrawMethod) == JNI_TRUE) {
+			updateRGB();
+		}
+	}
 
 	virtual ~CoreGroup();
 };

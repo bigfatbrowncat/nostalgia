@@ -1,8 +1,5 @@
 package nostalgia;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 import nostalgia.graphics.Bitmap;
 
 /**
@@ -22,8 +19,10 @@ public class Group {
 	private native long createNative();
 	private native void destroyNative(long nativeAddress);
 
-	public Group() {
+	public Group(int width, int height) {
 		nativeAddress = createNative();
+		pointsWidthCount = width;
+		pointsHeightCount = height;
 	}
 
 	@Override
@@ -53,35 +52,45 @@ public class Group {
 	 */
 	private int pointsWidthCount, pointsHeightCount;
 	
+	private boolean initial = true;
+	
 	/**
-	 * @return The screen bitmap. Draw here to make any changes to the screen.
+	 * <p><em>This method is called from JNI.
+	 * Don't change the signature</em></p>
 	 */
-	public Bitmap getBitmap() {
-		return bitmap;
+	private boolean innerDraw() {
+		if (bitmap == null) {
+			resize(pointsWidthCount, pointsHeightCount);
+		}
+		boolean res = draw(bitmap, initial);
+		initial = false;
+		return res;
 	}
 	
-	public native void updateRGB();
+	public boolean draw(Bitmap bitmap, boolean initial) {
+		return false;
+	}
+	
 	private native void innerResize(int width, int height);
 	
 	public void resize(int width, int height) {
+		initial = true;
 		pointsWidthCount = width;
 		pointsHeightCount = height;
 		
-		Bitmap bmp = getBitmap();
-		if (bmp == null) {
-			bmp = Bitmap.createWithoutAlpha(width, height);
+		if (bitmap == null) {
+			bitmap = Bitmap.createWithoutAlpha(width, height);
 		} else {
-			if (bmp.getR().length < width * height) {
-				bmp = Bitmap.createWithoutAlpha(width, height);
+			if (bitmap.getR().length < width * height) {
+				bitmap = Bitmap.createWithoutAlpha(width, height);
 			} else {
-				bmp = new Bitmap(bmp.getR(), bmp.getG(), bmp.getB(), null, width, height);
+				bitmap = new Bitmap(bitmap.getR(), bitmap.getG(), bitmap.getB(), null, width, height);
 			}
 		}
 		
-		this.r = bmp.getR();
-		this.g = bmp.getG();
-		this.b = bmp.getB();
-		this.bitmap = bmp;
+		this.r = bitmap.getR();
+		this.g = bitmap.getG();
+		this.b = bitmap.getB();
 		
 		innerResize(width, height);
 	}

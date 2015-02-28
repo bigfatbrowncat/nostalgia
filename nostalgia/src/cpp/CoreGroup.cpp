@@ -16,6 +16,11 @@
 #define FIELD_GROUP_POINTS_HEIGHT_COUNT		"pointsHeightCount"
 #define FIELD_GROUP_POINTS_HEIGHT_COUNT_SIG	"I"
 
+#define METHOD_GROUP_DRAW			"innerDraw"
+#define METHOD_GROUP_DRAW_SIG		"()Z"
+
+
+
 CoreGroup::CoreGroup(JNIEnv* env, jobject group)
 {
 	this->env = env;
@@ -49,6 +54,10 @@ CoreGroup::CoreGroup(JNIEnv* env, jobject group)
 		std::cout << "JNI problem: can't find " << FIELD_GROUP_POINTS_HEIGHT_COUNT << " field with signature " << FIELD_GROUP_POINTS_HEIGHT_COUNT_SIG << " in class " << CLASS_GROUP;
 	}
 
+	groupDrawMethod = env->GetMethodID(groupClass, METHOD_GROUP_DRAW, METHOD_GROUP_DRAW_SIG);
+	if (groupDrawMethod == NULL) {
+		std::cout << "JNI problem: can't find " << METHOD_GROUP_DRAW << " method with signature " << METHOD_GROUP_DRAW_SIG << " in class " << CLASS_GROUP;
+	}
 }
 
 bool CoreGroup::updateRGB()

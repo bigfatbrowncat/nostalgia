@@ -54,6 +54,7 @@ public:
 	Group();
 
 	void resize(int pointsWidthCount, int pointsHeightCount);
+	virtual void draw() = 0;
 	void display();
 	void setGlobalMatrix(const glm::mat4& globalMatrix) { this->globalMatrix = globalMatrix; }
 

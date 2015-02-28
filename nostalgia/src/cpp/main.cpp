@@ -123,6 +123,10 @@ void reshape(GLFWwindow* window, int w, int h)
 		terminatedByException = true;
 	}
 
+	for (set<Group*>::iterator iter = groups.begin(); iter != groups.end(); iter++) {
+		(*iter)->draw();
+	}
+
 	if (!(theHandlers->frameHandler)()) {
 		terminatedByException = true;
 	}
@@ -274,13 +278,13 @@ bool mainLoop()
 		dt = t - tOld;
 		tOld = t;
 
+		for (set<Group*>::iterator iter = groups.begin(); iter != groups.end(); iter++) {
+			(*iter)->draw();
+		}
+
 		if (!(theHandlers->frameHandler)()) {
 			terminatedByException = true;
 		}
-
-		/*if (theGroup != NULL) {
-			theGroup->display();
-		}*/
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

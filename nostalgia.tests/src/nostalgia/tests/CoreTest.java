@@ -14,7 +14,7 @@ public class CoreTest {
 	private static Random random = new Random();
 	private static int mouseX = -10, mouseY = -10;
 
-	private static Group noiseGroup = new Group(80, 60) {
+	private static Group noiseGroup = new Group(80, 60, false) {
 		@Override
 		public boolean draw(Painter p, boolean initial) {
 			Bitmap bitmap = p.getBitmap();
@@ -36,7 +36,7 @@ public class CoreTest {
 		}
 	};
 	
-	private static Group cursorGroup = new Group(8, 8) {
+	private static Group cursorGroup = new Group(8, 8, true) {
 		
 		private static final int cW = 8, cH = 8;
 		
@@ -74,7 +74,7 @@ public class CoreTest {
 		private int ls, ts, rs, bs;
 		private int clickedX, clickedY;
 		
-		private Group group = new Group(80, 60) {
+		private Group group = new Group(80, 60, false) {
 			
 			@Override
 			public boolean draw(Painter p, boolean forced) {

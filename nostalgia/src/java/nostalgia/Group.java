@@ -14,13 +14,14 @@ public class Group {
 	}
 
 	private long nativeAddress;
-	private native long createNative();
+	private native long createNative(boolean hasAlpha);
 	private native void destroyNative(long nativeAddress);
 
-	public Group(int width, int height) {
-		nativeAddress = createNative();
+	public Group(int width, int height, boolean hasAlpha) {
+		nativeAddress = createNative(hasAlpha);
 		this.width = width;
 		this.height = height;
+		this.hasAlpha = hasAlpha;
 	}
 
 	@Override
@@ -32,18 +33,15 @@ public class Group {
 		super.finalize();
 	}
 	
-	/**
-	 * <p><em>This variable is used in JNI.
-	 * Don't change the signature</em></p>
-	 */
 	private Bitmap bitmap;
 	private Painter painter;
+	private boolean hasAlpha;
 	
 	/**
 	 * <p><em>This variable is used in JNI.
 	 * Don't change the signature</em></p>
 	 */
-	private float[] r, g, b;
+	private float[] r, g, b, a;
 
 	/**
 	 * <p><em>This variable is used in JNI.
@@ -95,18 +93,19 @@ public class Group {
 		this.height = height;
 		
 		if (bitmap == null) {
-			bitmap = Bitmap.createWithoutAlpha(width, height);
+			bitmap = Bitmap.create(width, height, hasAlpha);
 		} else {
 			if (bitmap.getR().length < width * height) {
-				bitmap = Bitmap.createWithoutAlpha(width, height);
+				bitmap = Bitmap.create(width, height, hasAlpha);
 			} else {
-				bitmap = new Bitmap(bitmap.getR(), bitmap.getG(), bitmap.getB(), null, width, height);
+				bitmap = new Bitmap(bitmap.getR(), bitmap.getG(), bitmap.getB(), bitmap.getA(), width, height);
 			}
 		}
 		
 		this.r = bitmap.getR();
 		this.g = bitmap.getG();
 		this.b = bitmap.getB();
+		this.a = bitmap.getA();
 		
 		innerResize(width, height);
 	}

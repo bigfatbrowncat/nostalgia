@@ -11,6 +11,8 @@
 #define FIELD_GROUP_G_SIG					"[F"
 #define FIELD_GROUP_B						"b"
 #define FIELD_GROUP_B_SIG					"[F"
+#define FIELD_GROUP_A						"a"
+#define FIELD_GROUP_A_SIG					"[F"
 #define FIELD_GROUP_WIDTH		"width"
 #define FIELD_GROUP_WIDTH_SIG	"I"
 #define FIELD_GROUP_HEIGHT		"height"
@@ -21,7 +23,7 @@
 
 
 
-CoreGroup::CoreGroup(JNIEnv* env, jobject group)
+CoreGroup::CoreGroup(JNIEnv* env, jobject group, bool hasAlpha) : Group(hasAlpha)
 {
 	this->env = env;
 	this->group = env->NewGlobalRef(group);
@@ -44,6 +46,10 @@ CoreGroup::CoreGroup(JNIEnv* env, jobject group)
 	if (groupBField == NULL) {
 		std::cout << "JNI problem: can't find " << FIELD_GROUP_B << " field with signature " << FIELD_GROUP_B_SIG << " in class " << CLASS_GROUP;
 	}
+	groupAField = env->GetFieldID(groupClass, FIELD_GROUP_A, FIELD_GROUP_A_SIG);
+	if (groupAField == NULL) {
+		std::cout << "JNI problem: can't find " << FIELD_GROUP_A << " field with signature " << FIELD_GROUP_A_SIG << " in class " << CLASS_GROUP;
+	}
 
 	groupPointsWidthCountField = env->GetFieldID(groupClass, FIELD_GROUP_WIDTH, FIELD_GROUP_WIDTH_SIG);
 	if (groupPointsWidthCountField == NULL) {
@@ -65,6 +71,7 @@ bool CoreGroup::updateRGB()
 	jfloatArray rArray = (jfloatArray)env->GetObjectField(group, groupRField);
 	jfloatArray gArray = (jfloatArray)env->GetObjectField(group, groupGField);
 	jfloatArray bArray = (jfloatArray)env->GetObjectField(group, groupBField);
+	jfloatArray aArray = (jfloatArray)env->GetObjectField(group, groupAField);
 
 	jint pointsWidthCount = env->GetIntField(group, groupPointsWidthCountField);
 	jint pointsHeightCount = env->GetIntField(group, groupPointsHeightCountField);
@@ -74,6 +81,9 @@ bool CoreGroup::updateRGB()
 	env->GetFloatArrayRegion(rArray, 0, size, r);
 	env->GetFloatArrayRegion(gArray, 0, size, g);
 	env->GetFloatArrayRegion(bArray, 0, size, b);
+	if (getHasAlpha()) {
+		env->GetFloatArrayRegion(aArray, 0, size, a);
+	}
 
 	makeModel();
 

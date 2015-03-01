@@ -47,9 +47,9 @@ extern "C"
 		delete handlers;
 	}
 
-	JNIEXPORT jlong JNICALL Java_nostalgia_Group_createNative(JNIEnv* env, jobject obj)
+	JNIEXPORT jlong JNICALL Java_nostalgia_Group_createNative(JNIEnv* env, jobject obj, bool hasAlpha)
 	{
-		CoreGroup* group = new CoreGroup(env, obj);
+		CoreGroup* group = new CoreGroup(env, obj, hasAlpha);
 		std::cout << "CoreGroup created: " << group << std::endl;
 		return (jlong)group;
 	}

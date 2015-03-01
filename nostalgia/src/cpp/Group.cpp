@@ -85,7 +85,8 @@ void Group::lazyConstruct() {
 	}
 }
 
-Group::Group() {
+Group::Group(bool hasAlpha) {
+	this->hasAlpha = hasAlpha;
 	addGroup(this);
 }
 
@@ -95,8 +96,8 @@ void Group::createShaderProgram()
     ss << "#version 330 core\n";
     ss << "uniform mat4 globalTrans;\n";
     ss << "layout(location = " << VERTEX_INDEX << ") in vec3 vertex;\n";
-    ss << "layout(location = " << COLOR_INDEX << ") in vec3 vertexColor;\n";
-    ss << "out vec3 fragmentColor;\n";
+    ss << "layout(location = " << COLOR_INDEX << ") in vec4 vertexColor;\n";
+    ss << "out vec4 fragmentColor;\n";
     ss << "void main() {\n";
     ss << "    gl_Position = globalTrans * vec4(vertex, 1.0);\n";
     ss << "    gl_Position.w = 1.0;\n";
@@ -106,8 +107,8 @@ void Group::createShaderProgram()
 
     ss.str(string());
     ss << "#version 330 core\n";
-    ss << "in vec3 fragmentColor;\n";
-    ss << "out vec3 color;\n";
+    ss << "in vec4 fragmentColor;\n";
+    ss << "out vec4 color;\n";
     ss << "void main() {\n";
     ss << "    color = fragmentColor;\n";
     ss << "}\n";
@@ -178,7 +179,9 @@ void Group::makeModel()
 
 	GLfloat* vertexIter = vertexData;
 	GLfloat* vertexColorIter = vertexColorData;
-	float *rIter = r, *gIter = g, *bIter = b;
+	float *rIter = r, *gIter = g, *bIter = b, *aIter;
+
+	if (hasAlpha) aIter = a;
 	for (int j = 0; j < pointsHeightCount; j++)
 	{
 		for (int i = 0; i < pointsWidthCount; i++)
@@ -199,8 +202,14 @@ void Group::makeModel()
 				*vertexColorIter++ = *rIter;
 				*vertexColorIter++ = *gIter;
 				*vertexColorIter++ = *bIter;
+				if (hasAlpha) {
+					*vertexColorIter++ = *aIter;
+				} else {
+					*vertexColorIter++ = 1.0f;
+				}
 			}
 			rIter++; gIter++; bIter++;
+			if (hasAlpha) aIter++;
 		}
 	}
 }
@@ -212,10 +221,10 @@ void Group::display(float x, float y)
 		glm::mat4 globalTrans = globalMatrix * glm::translate(glm::vec3(x, -y, 0.0f));
 
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat) * 3, &vertexData[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), &vertexColorData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat) * 4, &vertexColorData[0], GL_STATIC_DRAW);
 
 		glUseProgram(shaderProgram);
 		glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "globalTrans"), 1, GL_FALSE, glm::value_ptr(globalTrans));
@@ -225,7 +234,7 @@ void Group::display(float x, float y)
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 			glVertexAttribPointer(
-					VERTEX_INDEX,		// attribute 0. No particular reason for 0, but must match the layout in the shader.
+					VERTEX_INDEX,
 					3,                  // size
 					GL_FLOAT,           // type
 					GL_FALSE,           // normalized?
@@ -237,8 +246,8 @@ void Group::display(float x, float y)
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 			glVertexAttribPointer(
-					COLOR_INDEX,		// attribute 0. No particular reason for 0, but must match the layout in the shader.
-					3,                  // size
+					COLOR_INDEX,
+					4,                  // size
 					GL_FLOAT,           // type
 					GL_FALSE,           // normalized?
 					0,                  // stride
@@ -282,7 +291,6 @@ void Group::resize(int pointsWidthCount, int pointsHeightCount)
 	this->pointsWidthCount = pointsWidthCount;
 	this->pointsHeightCount = pointsHeightCount;
 
-	int cubeVertexDataLength = sizeof(cubeVertexData) / sizeof(GLfloat);
 	if (vertexData != NULL)
 	{
 		delete [] vertexData;
@@ -291,16 +299,24 @@ void Group::resize(int pointsWidthCount, int pointsHeightCount)
 	{
 		delete [] vertexColorData;
 	}
-	verticesCount = cubeVertexDataLength * pointsWidthCount * pointsHeightCount;
-	vertexData = new GLfloat[verticesCount];
-	vertexColorData = new GLfloat[verticesCount];
+
+	int cubeVerticesCount = sizeof(cubeVertexData) / sizeof(GLfloat) / 3;
+	verticesCount = cubeVerticesCount * pointsWidthCount * pointsHeightCount;
+
+	vertexData = new GLfloat[verticesCount * 3];
+	vertexColorData = new GLfloat[verticesCount * 4];
 
 	if (r != NULL) { delete [] r; }
 	if (g != NULL) { delete [] g; }
 	if (b != NULL) { delete [] b; }
+	if (a != NULL) { delete [] a; }
+
 	r = new float[pointsWidthCount * pointsHeightCount];
 	g = new float[pointsWidthCount * pointsHeightCount];
 	b = new float[pointsWidthCount * pointsHeightCount];
+	if (hasAlpha) {
+		a = new float[pointsWidthCount * pointsHeightCount];
+	}
 
 	allocateBuffers();
 

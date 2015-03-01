@@ -26,6 +26,7 @@ private:
 	int verticesCount = 0;
 	int pointsWidthCount = 0, pointsHeightCount = 0;
 	int screenWidth, screenHeight;
+	bool hasAlpha;
 
 	glm::mat4 globalMatrix;
 
@@ -47,12 +48,12 @@ private:
 		}
 	}
 protected:
-	float *r = NULL, *g = NULL, *b = NULL;
+	float *r = NULL, *g = NULL, *b = NULL, *a = NULL;
 
 	void makeModel();
 
 public:
-	Group();
+	Group(bool hasAlpha);
 
 	void resize(int pointsWidthCount, int pointsHeightCount);
 	virtual void draw() = 0;
@@ -62,6 +63,7 @@ public:
 		this->screenWidth = width;
 		this->screenHeight = height;
 	}
+	bool getHasAlpha() { return hasAlpha; }
 
 	virtual ~Group();
 };

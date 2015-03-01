@@ -22,7 +22,7 @@ public class SimpleTest {
 
 	public static void main(String[] args) {
 		if (Core.open("JNILayerTest MainWindow", 800, 600, 2)) {
-			group1 = new Group(800, 600);			
+			group1 = new Group(800, 600, false);			
 			Core.setCursorVisibility(false);
 			
 			Core.setHandler(handler1);

@@ -152,7 +152,7 @@ public class BaseGroup extends Group {
 
 	
 	public BaseGroup(int width, int height, Data data) {
-		super(width, height);
+		super(width, height, false);
 		this.data = data;
 	}
 	

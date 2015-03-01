@@ -17,6 +17,13 @@ public class Bitmap {
 				new float[width * height], 
 				null, width, height);
 	}
+	public static Bitmap create(int width, int height, boolean withAlpha) {
+		if (withAlpha) {
+			return createWithAlpha(width, height);
+		} else {
+			return createWithoutAlpha(width, height);
+		}
+	}
 	
 	public Bitmap(float[] r, float[] g, float[] b, float[] a, int width, int height) {
 		this(r, g, b, a, width, height, 0, width);

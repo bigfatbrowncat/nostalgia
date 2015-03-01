@@ -2,13 +2,8 @@ package letterplot.views;
 
 import java.util.ArrayList;
 
-import letterplot.Constants;
 import letterplot.model.Data;
-import nostalgia.Group;
 import nostalgia.Handler;
-import nostalgia.graphics.Bitmap;
-import nostalgia.graphics.Color;
-import nostalgia.graphics.Painter;
 
 public abstract class BaseHandler extends Handler {
 

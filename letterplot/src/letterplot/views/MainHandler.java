@@ -37,7 +37,7 @@ public abstract class MainHandler extends BaseHandler {
 	public MainHandler(Data data) {
 		super(data);
 		setMainGroup(new MainGroup());
-		getMainGroup().setPangram(pangram);
+		BaseGroup.setPangram(pangram);
 	}
 
 	protected abstract void showAddSymbolDialog();

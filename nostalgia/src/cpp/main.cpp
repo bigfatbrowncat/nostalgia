@@ -119,7 +119,7 @@ void reshape(GLFWwindow* window, int w, int h)
 	pointsHeightCount = (int)((float)h_smaller / pixelsPerPoint) + 2;
 
 	for (set<Group*>::iterator iter = groups.begin(); iter != groups.end(); iter++) {
-		(*iter)->setGlobalMatrix(proportional);
+		(*iter)->setScreenMatrix(proportional);
 		(*iter)->setScreenSize(pointsWidthCount, pointsHeightCount);
 	}
 

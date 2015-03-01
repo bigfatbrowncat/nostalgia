@@ -14,6 +14,8 @@
 
 #include <glm/glm.hpp>
 
+#include "Transform.h"
+
 class Group {
 private:
 	GLuint shaderProgram;
@@ -28,7 +30,8 @@ private:
 	int screenWidth, screenHeight;
 	bool hasAlpha;
 
-	glm::mat4 globalMatrix;
+	glm::mat4 screenMatrix;
+	glm::mat4 transformMatrix;
 
 	bool constructed = false;
 	void lazyConstruct();
@@ -57,8 +60,8 @@ public:
 
 	void resize(int pointsWidthCount, int pointsHeightCount);
 	virtual void draw() = 0;
-	void display(float x, float y);
-	void setGlobalMatrix(const glm::mat4& globalMatrix) { this->globalMatrix = globalMatrix; }
+	void display(const Transform& transform);
+	void setScreenMatrix(const glm::mat4& screenMatrix) { this->screenMatrix = screenMatrix; }
 	void setScreenSize(int width, int height) {
 		this->screenWidth = width;
 		this->screenHeight = height;

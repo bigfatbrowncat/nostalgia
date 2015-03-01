@@ -12,6 +12,7 @@
 #include <GL3/gl3w.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include "main.hpp"
 #include "Group.h"
@@ -214,11 +215,13 @@ void Group::makeModel()
 	}
 }
 
-void Group::display(float x, float y)
+void Group::display(const Transform& transform)
 {
 	if (buffersAllocated)
 	{
-		glm::mat4 globalTrans = globalMatrix * glm::translate(glm::vec3(x, -y, 0.0f));
+		glm::mat4 globalTrans = screenMatrix * transform.getMatrix();// *
+				/*glm::rotate(glm::mat4(1.0f), (glm::mediump_float)3.14159 / 4, glm::vec3(0,0,1)) **/
+				/*glm::translate(glm::vec3(x, -y, 0.0f))*/;
 
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat) * 3, &vertexData[0], GL_STATIC_DRAW);
@@ -306,10 +309,10 @@ void Group::resize(int pointsWidthCount, int pointsHeightCount)
 	vertexData = new GLfloat[verticesCount * 3];
 	vertexColorData = new GLfloat[verticesCount * 4];
 
-	if (r != NULL) { delete [] r; }
-	if (g != NULL) { delete [] g; }
-	if (b != NULL) { delete [] b; }
-	if (a != NULL) { delete [] a; }
+	if (r != NULL) { delete [] r; r = NULL; }
+	if (g != NULL) { delete [] g; g = NULL; }
+	if (b != NULL) { delete [] b; b = NULL; }
+	if (a != NULL) { delete [] a; a = NULL; }
 
 	r = new float[pointsWidthCount * pointsHeightCount];
 	g = new float[pointsWidthCount * pointsHeightCount];
@@ -329,5 +332,11 @@ Group::~Group() {
 
 	glDeleteVertexArrays(1, &vertexArray);
 	glDeleteProgram(shaderProgram);
+
+	if (r != NULL) { delete [] r; r = NULL; }
+	if (g != NULL) { delete [] g; g = NULL; }
+	if (b != NULL) { delete [] b; b = NULL; }
+	if (a != NULL) { delete [] a; a = NULL; }
+
 }
 

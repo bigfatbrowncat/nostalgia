@@ -5,6 +5,7 @@ import java.util.Random;
 import nostalgia.Core;
 import nostalgia.Group;
 import nostalgia.Handler;
+import nostalgia.Transform;
 import nostalgia.graphics.Bitmap;
 import nostalgia.graphics.Color;
 import nostalgia.graphics.Painter;
@@ -111,9 +112,15 @@ public class CoreTest {
 			group.resize(getPointsWidthCount(), getPointsHeightCount());
 		}
 
+		private float tt = 0;
 		public void frame() {
+			tt += 0.01;
+			
 			group.display(0, 0);
-			noiseGroup.display(ls, ts);
+
+			Transform move = Transform.translate(ls, -ts, 0f);
+			Transform test = Transform.multiply(Transform.rotate(3.14159f * tt, 0, 0, 1), move);
+			noiseGroup.display(test);
 			cursorGroup.display(mouseX, mouseY);
 		}
 		
@@ -163,7 +170,7 @@ public class CoreTest {
 	
 	public static void main(String[] args) {
 		
-		if (Core.open("JNILayerTest MainWindow", 800, 600, 2)) {
+		if (Core.open("JNILayerTest MainWindow", 800, 600, 3)) {
 			Core.setCursorVisibility(false);
 			Core.setHandler(handler1);
 			

@@ -8,7 +8,7 @@
 #ifndef COREHANDLERS_H_
 #define COREHANDLERS_H_
 
-#include "jni.h"
+#include <jni.h>
 
 #include "main.hpp"
 

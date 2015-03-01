@@ -5,6 +5,7 @@
 #include "Core.hpp"
 #include "CoreGroup.h"
 #include "CoreHandlers.h"
+#include "CoreTransform.h"
 
 #define CLASS_HANDLER						"nostalgia/Handler"
 #define FIELD_HANDLER_NATIVE_ADDRESS		"nativeAddress"
@@ -66,9 +67,10 @@ extern "C"
 		extractCoreGroupFromJavaGroup(env, group)->resize(width, height);
 	}
 
-	JNIEXPORT void JNICALL Java_nostalgia_Group_display(JNIEnv* env, jobject group, float x, float y)
+	JNIEXPORT void JNICALL Java_nostalgia_Group_display(JNIEnv* env, jobject group, jobject transform)
 	{
-		extractCoreGroupFromJavaGroup(env, group)->display(x, y);
+		const Transform& trans = getNativeTransformFromJava(env, transform);
+		extractCoreGroupFromJavaGroup(env, group)->display(trans);
 	}
 
 	JNIEXPORT void JNICALL Java_nostalgia_Core_setHandler(JNIEnv* env, jclass clz, jobject handler)

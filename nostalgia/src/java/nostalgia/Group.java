@@ -110,5 +110,10 @@ public class Group {
 		innerResize(width, height);
 	}
 	
-	public native void display(float x, float y);
+	public native void display(Transform transform);
+	
+	public void display(float x, float y) {
+		Transform move = Transform.translate(x, -y, 0.f);
+		display(move);
+	}
 }

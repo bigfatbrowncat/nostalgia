@@ -93,6 +93,9 @@ public class CoreTest {
 					p.drawLine(20, 140, 120, 120);
 					p.drawLine(60, 10, 100, 50);
 					
+					p.setBackground(new Color(0, 0.5f, 0, 0.3f));
+					p.drawEllipse(10, 20, 180, 300);
+					
 					return true;
 				}
 				else {
@@ -170,7 +173,7 @@ public class CoreTest {
 	
 	public static void main(String[] args) {
 		
-		if (Core.open("JNILayerTest MainWindow", 800, 600, 3)) {
+		if (Core.open("JNILayerTest MainWindow", 800, 600, 2)) {
 			Core.setCursorVisibility(false);
 			Core.setHandler(handler1);
 			

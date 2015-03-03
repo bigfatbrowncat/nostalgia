@@ -146,6 +146,41 @@ public class Painter {
 		}
 	}
 	
+	public void drawEllipse(int x1, int y1, int x2, int y2) {
+		// Ranges
+		int x1r = Math.min(x1, x2), x2r = Math.max(x1, x2);
+		int y1r = Math.min(y1, y2), y2r = Math.max(y1, y2);
+
+		// Screen mins and maxes
+		int x1a = Math.max(x1r, 0), x2a = Math.min(x2r, getBitmap().getWidth() - 1);
+		int y1a = Math.max(y1r, 0), y2a = Math.min(y2r, getBitmap().getHeight() - 1);
+
+		float xc = (float)(x2r + x1r) / 2, yc = (float)(y2r + y1r) / 2;
+		
+		// Drawing
+		if (background != null) {
+
+			if (y1 == y2) {
+				// We have a line here
+				for (int i = x1r; i <= x2r; i++) {
+					bitmap.setPixel(i, y1, background);
+				}
+			} else {
+				float k = (float)(x2r - x1r) / (y2r - y1r);
+				float rsqr = (float)(y2r - y1r + 0.3f)*(y2r - y1r + 0.3f) / 4;
+				for (int i = x1a; i <= x2a; i++) {
+					for (int j = y1a; j <= y2a; j++) {
+						if ((i - xc)*(i - xc)/k/k + (j - yc)*(j - yc) <= rsqr) {
+							bitmap.setPixel(i, j, background);
+						}
+					}
+				}
+			}
+		}
+		
+		
+	}
+	
 	public int stringWidth(String s) {
 		return s.length() * font.getWidth();
 	}

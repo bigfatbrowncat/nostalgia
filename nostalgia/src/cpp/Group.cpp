@@ -19,9 +19,6 @@
 
 using namespace std;
 
-static const int VERTEX_INDEX = 0;
-static const int COLOR_INDEX = 1;
-
 static const GLfloat cubeVertexData[] = {
 	0.5f, 0.5f,0.0f, // triangle 2 : begin
 	-0.5f,-0.5f,0.0f,
@@ -100,8 +97,8 @@ void Group::createShaderProgram()
 	stringstream ss;
     ss << "#version 330 core\n";
     ss << "uniform mat4 globalTrans;\n";
-    ss << "layout(location = " << VERTEX_INDEX << ") in vec3 vertex;\n";
-    ss << "layout(location = " << COLOR_INDEX << ") in vec4 vertexColor;\n";
+    ss << "in vec3 vertex;\n";
+    ss << "in vec4 vertexColor;\n";
     ss << "out vec4 fragmentColor;\n";
     ss << "void main() {\n";
     ss << "    gl_Position = globalTrans * vec4(vertex, 1.0);\n";
@@ -223,6 +220,11 @@ void Group::display(const Transform& transform)
 {
 	if (buffersAllocated)
 	{
+		GLint globalTransLocation = glGetUniformLocation(shaderProgram, "globalTrans");
+		GLint vertexLocation = glGetAttribLocation(shaderProgram, "vertex");
+		GLint vertexColorLocation = glGetAttribLocation(shaderProgram, "vertexColor");
+
+
 		glm::mat4 globalTrans = screenMatrix * transform.getMatrix();// *
 				/*glm::rotate(glm::mat4(1.0f), (glm::mediump_float)3.14159 / 4, glm::vec3(0,0,1)) **/
 				/*glm::translate(glm::vec3(x, -y, 0.0f))*/;
@@ -234,14 +236,14 @@ void Group::display(const Transform& transform)
 		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat) * 4, &vertexColorData[0], GL_STATIC_DRAW);
 
 		glUseProgram(shaderProgram);
-		glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "globalTrans"), 1, GL_FALSE, glm::value_ptr(globalTrans));
-		glEnableVertexAttribArray(VERTEX_INDEX);
-		glEnableVertexAttribArray(COLOR_INDEX);
+		glUniformMatrix4fv(globalTransLocation, 1, GL_FALSE, glm::value_ptr(globalTrans));
+		glEnableVertexAttribArray(vertexLocation);
+		glEnableVertexAttribArray(vertexColorLocation);
 
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 			glVertexAttribPointer(
-					VERTEX_INDEX,
+					vertexLocation,
 					3,                  // size
 					GL_FLOAT,           // type
 					GL_FALSE,           // normalized?
@@ -253,7 +255,7 @@ void Group::display(const Transform& transform)
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 			glVertexAttribPointer(
-					COLOR_INDEX,
+					vertexColorLocation,
 					4,                  // size
 					GL_FLOAT,           // type
 					GL_FALSE,           // normalized?
@@ -265,8 +267,8 @@ void Group::display(const Transform& transform)
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLES, 0, verticesCount);
 
-		glDisableVertexAttribArray(VERTEX_INDEX);
-		glDisableVertexAttribArray(COLOR_INDEX);
+		glDisableVertexAttribArray(vertexLocation);
+		glDisableVertexAttribArray(vertexColorLocation);
 	}
 	else
 	{

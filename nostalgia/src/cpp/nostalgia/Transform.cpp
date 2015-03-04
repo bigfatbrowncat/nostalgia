@@ -6,6 +6,7 @@
  */
 
 #include "Transform.h"
+#include "../Transform.h"
 
 namespace nostalgia {
 
@@ -36,8 +37,8 @@ namespace nostalgia {
 			return (jlong)(new Transform(Transform::multiply(t1, t2)));
 		}
 
-		JNIEXPORT void JNICALL Java_nostalgia_Transform_destroyNative(JNIEnv* env, jclass clz, long pointer) {
-			delete (Transform*)pointer;
+		JNIEXPORT void JNICALL Java_nostalgia_Transform_destroyNative(JNIEnv* env, jclass clz, jlong pointer) {
+			delete (::Transform*)pointer;
 		}
 	}
 

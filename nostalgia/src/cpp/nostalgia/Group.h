@@ -40,9 +40,9 @@ namespace nostalgia {
 		jmethodID groupDrawMethod;
 		jobject group;
 
+		bool updateRGB();
 	public:
 		Group(JNIEnv* env, jobject group, bool hasAlpha);
-		bool updateRGB();
 		virtual void draw() {
 			if (env->CallBooleanMethod(group, groupDrawMethod) == JNI_TRUE) {
 				updateRGB();

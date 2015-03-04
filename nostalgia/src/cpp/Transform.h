@@ -1,10 +1,3 @@
-/*
- * Transform.h
- *
- *  Created on: 02 ????? 2015 ?.
- *      Author: il
- */
-
 #ifndef TRANSFORM_H_
 #define TRANSFORM_H_
 

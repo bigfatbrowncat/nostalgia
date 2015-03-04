@@ -99,6 +99,12 @@ public class Group {
 				bitmap = Bitmap.create(width, height, hasAlpha);
 			} else {
 				bitmap = new Bitmap(bitmap.getR(), bitmap.getG(), bitmap.getB(), bitmap.getA(), width, height);
+				for (int k = 0; k < width * height; k++) {
+					bitmap.getR()[k] = 0;
+					bitmap.getG()[k] = 0;
+					bitmap.getB()[k] = 0;
+					if (bitmap.getA() != null) bitmap.getA()[k] = 0;
+				}
 			}
 		}
 		

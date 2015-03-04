@@ -220,6 +220,9 @@ void Group::display(const Transform& transform)
 {
 	if (buffersAllocated)
 	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		GLint globalTransLocation = glGetUniformLocation(shaderProgram, "globalTrans");
 		GLint vertexLocation = glGetAttribLocation(shaderProgram, "vertex");
 		GLint vertexColorLocation = glGetAttribLocation(shaderProgram, "vertexColor");

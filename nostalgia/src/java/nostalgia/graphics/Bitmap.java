@@ -83,9 +83,9 @@ public class Bitmap {
 				// you write blitting of 2 images to a background 
 				// consequentially and merge the two blitting procedures to one
 				this.a[index] = this.a[index] + a - this.a[index] * a;
-				this.r[index] = this.r[index] - a * (this.r[index] - r) / this.a[index];
-				this.g[index] = this.g[index] - a * (this.g[index] - g) / this.a[index];
-				this.b[index] = this.b[index] - a * (this.b[index] - b) / this.a[index];
+				this.r[index] = this.r[index] - a * (this.r[index] - r) / (this.a[index] + 0.0001f);
+				this.g[index] = this.g[index] - a * (this.g[index] - g) / (this.a[index] + 0.0001f);
+				this.b[index] = this.b[index] - a * (this.b[index] - b) / (this.a[index] + 0.0001f);
 			} else {
 				throw new RuntimeException("Strange case");
 			}

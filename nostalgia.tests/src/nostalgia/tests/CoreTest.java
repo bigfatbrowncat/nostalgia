@@ -65,8 +65,11 @@ public class CoreTest {
 		private final Bitmap cursor = new Bitmap(c, c, c, a, cW, cH);
 
 		public boolean draw(Painter painter, boolean forced) {
-			painter.drawBitmap(cursor, 0, 0);
-			return true;
+			if (forced) {
+				painter.drawBitmap(cursor, 0, 0);
+				return true;
+			} else
+				return false;
 		}
 	};
 	

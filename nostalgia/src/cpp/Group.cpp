@@ -192,7 +192,7 @@ void Group::makeModel()
 			GLfloat pixelGeometry[cubeVertexDataLength];
 			memcpy(pixelGeometry, cubeVertexData, cubeVertexDataLength * sizeof(GLfloat));
 
-			glm::mat4 trans = glm::translate(glm::vec3(-(float)screenWidth / 2 + i + 0.5f, (float)screenHeight / 2 - j - 0.5f, 0.0f));
+			glm::mat4 trans = glm::translate(glm::vec3(-(float)pointsWidthCount / 2 + i + 0.5f, (float)pointsHeightCount / 2 - j - 0.5f, 0.0f));
 
 			applyMatrix(&pixelGeometry[0], cubeVertexDataLength / 3, trans);
 			memcpy(vertexIter, pixelGeometry, cubeVertexDataLength * sizeof(GLfloat));
@@ -227,8 +227,9 @@ void Group::display(const Transform& transform)
 		GLint vertexLocation = glGetAttribLocation(shaderProgram, "vertex");
 		GLint vertexColorLocation = glGetAttribLocation(shaderProgram, "vertexColor");
 
+		glm::mat4 trans = glm::translate(glm::vec3(-(float)screenWidth / 2 + (float)pointsWidthCount / 2 + 1, (float)screenHeight / 2 - (float)pointsHeightCount / 2 - 1, 0.0f));
 
-		glm::mat4 globalTrans = screenMatrix * transform.getMatrix();// *
+		glm::mat4 globalTrans = screenMatrix * trans * transform.getMatrix();// *
 				/*glm::rotate(glm::mat4(1.0f), (glm::mediump_float)3.14159 / 4, glm::vec3(0,0,1)) **/
 				/*glm::translate(glm::vec3(x, -y, 0.0f))*/;
 

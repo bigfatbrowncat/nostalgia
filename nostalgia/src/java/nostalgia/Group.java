@@ -122,4 +122,12 @@ public class Group {
 		Transform move = Transform.translate(x, -y, 0.f);
 		display(move);
 	}
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
+	}
 }

@@ -56,29 +56,29 @@ public class Bitmap {
 	}
 	
 	public void setPixel(int i, int j, float r, float g, float b) {
-		if (i >= 0 && j >= 0 && i < width && j < height) {
+		//if (i >= 0 && j >= 0 && i < width && j < height) {
 			int index = offset + j * stride + i;
 			if (this.a == null) {
 				this.r[index] = r;
 				this.g[index] = g;
 				this.b[index] = b;
-			} else if (this.a != null) {
+			} else /*if (this.a != null)*/ {
 				this.r[index] = r;
 				this.g[index] = g;
 				this.b[index] = b;
 				this.a[index] = 1.0f;
 			}
-		}
+		//}
 	}
 
 	public void setPixel(int i, int j, float r, float g, float b, float a) {
-		if (i >= 0 && j >= 0 && i < width && j < height) {
+		//if (i >= 0 && j >= 0 && i < width && j < height) {
 			int index = offset + j * stride + i;
 			if (this.a == null) {
 				this.r[index] = r * a + this.r[index] * (1.0f - a);
 				this.g[index] = g * a + this.g[index] * (1.0f - a);
 				this.b[index] = b * a + this.b[index] * (1.0f - a);
-			} else if (this.a != null) {
+			} else /*if (this.a != null)*/ {
 				// This sophisticated formula could be obtained if
 				// you write blitting of 2 images to a background 
 				// consequentially and merge the two blitting procedures to one
@@ -86,10 +86,8 @@ public class Bitmap {
 				this.r[index] = this.r[index] - a * (this.r[index] - r) / (this.a[index] + 0.0001f);
 				this.g[index] = this.g[index] - a * (this.g[index] - g) / (this.a[index] + 0.0001f);
 				this.b[index] = this.b[index] - a * (this.b[index] - b) / (this.a[index] + 0.0001f);
-			} else {
-				throw new RuntimeException("Strange case");
 			}
-		}
+		//}
 	}
 	
 	public void setPixel(int i, int j, Color c) {

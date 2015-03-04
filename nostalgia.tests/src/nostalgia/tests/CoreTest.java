@@ -125,7 +125,7 @@ public class CoreTest {
 			group.display(0, 0);
 
 			Transform move = Transform.translate(ls, -ts, 0f);
-			Transform test = Transform.multiply(Transform.rotate(3.14159f * tt, 0, 0, 1), move);
+			Transform test = Transform.multiply(move, Transform.rotate(3.14159f * tt, 0, 0, 1));
 			noiseGroup.display(test);
 			cursorGroup.display(mouseX, mouseY);
 		}

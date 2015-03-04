@@ -24,7 +24,6 @@ private:
 	bool hasAlpha;
 
 	glm::mat4 screenMatrix;
-	glm::mat4 transformMatrix;
 
 	bool constructed;
 	void lazyConstruct();

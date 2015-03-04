@@ -28,8 +28,8 @@ static const GLfloat cubeVertexData[] = {
 	-0.5f,-0.5f,0.0f,
 };
 
-/*
-static const GLfloat cubeVertexData[] = {
+
+/*static const GLfloat cubeVertexData[] = {
     -0.5f,-0.5f,-0.5f, // triangle 1 : begin
     -0.5f,-0.5f, 0.5f,
     -0.5f, 0.5f, 0.5f, // triangle 1 : end
@@ -220,8 +220,11 @@ void Group::display(const Transform& transform)
 {
 	if (buffersAllocated)
 	{
+		//glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
 
 		GLint globalTransLocation = glGetUniformLocation(shaderProgram, "globalTrans");
 		GLint vertexLocation = glGetAttribLocation(shaderProgram, "vertex");
@@ -268,7 +271,6 @@ void Group::display(const Transform& transform)
 			);
 		}
 
-		glClear(GL_DEPTH_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLES, 0, verticesCount);
 
 		glDisableVertexAttribArray(vertexLocation);

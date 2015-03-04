@@ -56,7 +56,7 @@ public class Bitmap {
 	}
 	
 	public void setPixel(int i, int j, float r, float g, float b) {
-		//if (i >= 0 && j >= 0 && i < width && j < height) {
+		if (i >= 0 && j >= 0 && i < width && j < height) {
 			int index = offset + j * stride + i;
 			if (this.a == null) {
 				this.r[index] = r;
@@ -68,11 +68,11 @@ public class Bitmap {
 				this.b[index] = b;
 				this.a[index] = 1.0f;
 			}
-		//}
+		}
 	}
 
 	public void setPixel(int i, int j, float r, float g, float b, float a) {
-		//if (i >= 0 && j >= 0 && i < width && j < height) {
+		if (i >= 0 && j >= 0 && i < width && j < height) {
 			int index = offset + j * stride + i;
 			if (this.a == null) {
 				this.r[index] = r * a + this.r[index] * (1.0f - a);
@@ -87,7 +87,7 @@ public class Bitmap {
 				this.g[index] = this.g[index] - a * (this.g[index] - g) / (this.a[index] + 0.0001f);
 				this.b[index] = this.b[index] - a * (this.b[index] - b) / (this.a[index] + 0.0001f);
 			}
-		//}
+		}
 	}
 	
 	public void setPixel(int i, int j, Color c) {

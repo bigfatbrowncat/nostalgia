@@ -108,7 +108,7 @@ void reshape(GLFWwindow* window, int w, int h)
 	windowWidth = w;
 	windowHeight = h;
 
-	proportional = glm::scale(glm::vec3(2.0f * pixelsPerPoint / w, 2.0f * pixelsPerPoint / h, 1.0f));
+	proportional = glm::scale(glm::vec3(2.0f * pixelsPerPoint / w, 2.0f * pixelsPerPoint / h, 2.0f * pixelsPerPoint / (w + h)));
 
 	int w_smaller = (w / pixelsPerPoint) * pixelsPerPoint;
 	int h_smaller = (h / pixelsPerPoint) * pixelsPerPoint;

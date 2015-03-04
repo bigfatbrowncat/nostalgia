@@ -1,10 +1,3 @@
-/*
- * Group.h
- *
- *  Created on: 19 ????. 2015 ?.
- *      Author: il
- */
-
 #ifndef GROUP_H_
 #define GROUP_H_
 
@@ -20,20 +13,20 @@ class Group {
 private:
 	GLuint shaderProgram;
 	GLuint vertexArray;
-	bool buffersAllocated = false;
+	bool buffersAllocated;
 	GLuint vertexBuffer, colorBuffer;
 
-	GLfloat* vertexData = NULL;
-	GLfloat* vertexColorData = NULL;
-	int verticesCount = 0;
-	int pointsWidthCount = 0, pointsHeightCount = 0;
+	GLfloat* vertexData;
+	GLfloat* vertexColorData;
+	int verticesCount;
+	int pointsWidthCount, pointsHeightCount;
 	int screenWidth, screenHeight;
 	bool hasAlpha;
 
 	glm::mat4 screenMatrix;
 	glm::mat4 transformMatrix;
 
-	bool constructed = false;
+	bool constructed;
 	void lazyConstruct();
 
 	void createShaderProgram();
@@ -51,7 +44,7 @@ private:
 		}
 	}
 protected:
-	float *r = NULL, *g = NULL, *b = NULL, *a = NULL;
+	float *r, *g, *b, *a;
 
 	void makeModel();
 

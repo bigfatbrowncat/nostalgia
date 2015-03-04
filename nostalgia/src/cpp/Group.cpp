@@ -86,7 +86,11 @@ void Group::lazyConstruct() {
 	}
 }
 
-Group::Group(bool hasAlpha) {
+Group::Group(bool hasAlpha) : buffersAllocated(false),
+        vertexData(NULL), vertexColorData(NULL), verticesCount(0),
+        pointsWidthCount(0), pointsHeightCount(0),
+        constructed(false), r(NULL), g(NULL), b(NULL), a(NULL)
+{
 	this->hasAlpha = hasAlpha;
 	addGroup(this);
 }

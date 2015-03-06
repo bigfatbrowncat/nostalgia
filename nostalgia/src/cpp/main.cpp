@@ -178,6 +178,10 @@ void cursorPositionCallback(GLFWwindow* window, double x, double y)
 	}
 }
 
+void errorCallback(int code, const char* message) {
+	std::cerr << "GLFW error " << code << ": " << message << std::endl;
+}
+
 void setCursorVisibility(bool visible)
 {
 	if (visible)
@@ -190,6 +194,32 @@ void setCursorVisibility(bool visible)
 	}
 }
 
+
+
+GLFWwindow* initFallback(const char* title, int windowWidth, int windowHeight)
+{
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DEPTH_BITS, 16);
+	glfwWindowHint(GLFW_SAMPLES, 1);
+
+	return glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
+}
+
+GLFWwindow* initBase(const char* title, int windowWidth, int windowHeight)
+{
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DEPTH_BITS, 16);
+	glfwWindowHint(GLFW_SAMPLES, 3);
+
+	return glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
+}
+
 bool createWindow(const char* title, int windowWidth, int windowHeight, int pixelsPerPoint)
 {
 	::pixelsPerPoint = pixelsPerPoint;
@@ -199,20 +229,20 @@ bool createWindow(const char* title, int windowWidth, int windowHeight, int pixe
 		return false;
 	}
 
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_DEPTH_BITS, 16);
-	glfwWindowHint(GLFW_SAMPLES, 1);
+    glfwSetErrorCallback(errorCallback);
 
-	window = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
-	if (!window)
-	{
-		cout << "Error: can't create a window" << std::endl;
-		glfwTerminate();
-		return false;
-	}
+    window = initBase(title, windowWidth, windowHeight);
+    if (!window)
+    {
+    	cerr << "Warning: can't create an OpenGL window in the base configuration. Using the fallback..." << std::endl;
+    	window = initFallback(title, windowWidth, windowHeight);
+    	if (!window)
+    	{
+    		cerr << "Error: can't create an OpenGL window even in a fallback configuration. Sorry..." << std::endl;
+    		glfwTerminate();
+    		return false;
+    	}
+    }
 
 	glfwSetWindowSizeCallback(window, reshape);
 	glfwSetKeyCallback(window, keyCallback);

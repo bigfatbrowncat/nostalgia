@@ -1,5 +1,6 @@
 package nostalgia;
 
+import quicktime.app.display.Drawable;
 import nostalgia.graphics.Bitmap;
 import nostalgia.graphics.Painter;
 
@@ -49,7 +50,7 @@ public class Group {
 	 */
 	private int width, height;
 	
-	private boolean forcedDraw = true;
+	private boolean invalidated = true;
 	
 	/**
 	 * <p><em>This method is called from JNI.
@@ -62,8 +63,8 @@ public class Group {
 		if (painter == null || painter.getBitmap() != bitmap) {
 			painter = new Painter(bitmap);
 		}
-		boolean res = draw(painter, forcedDraw);
-		forcedDraw = false;
+		boolean res = draw(painter, invalidated);
+		invalidated = false;
 		return res;
 	}
 	
@@ -87,25 +88,35 @@ public class Group {
 	
 	private native void innerResize(int width, int height);
 	
+	/**
+	 * <p>This function clears the group contents and sets the
+	 * forced flag for the next call of the {@link Group#draw draw()} method.</p>
+	 * <p>If the group has transparency, it will be cleared to transparent state.
+	 * Otherwise it will be cleared into black</p>
+	 */
+	protected void invalidate() {
+		if (!invalidated) {
+			for (int k = 0; k < width * height; k++) {
+				bitmap.getR()[k] = 0;
+				bitmap.getG()[k] = 0;
+				bitmap.getB()[k] = 0;
+				if (bitmap.getA() != null) bitmap.getA()[k] = 0;
+			}
+			invalidated = true;
+		}
+	}
+	
 	public void resize(int width, int height) {
-		forcedDraw = true;
 		this.width = width;
 		this.height = height;
 		
-		if (bitmap == null) {
+		if (bitmap == null || bitmap.getR().length < width * height) {
+			// Creating new bitmap
 			bitmap = Bitmap.create(width, height, hasAlpha);
+			invalidated = true;
 		} else {
-			if (bitmap.getR().length < width * height) {
-				bitmap = Bitmap.create(width, height, hasAlpha);
-			} else {
-				bitmap = new Bitmap(bitmap.getR(), bitmap.getG(), bitmap.getB(), bitmap.getA(), width, height);
-				for (int k = 0; k < width * height; k++) {
-					bitmap.getR()[k] = 0;
-					bitmap.getG()[k] = 0;
-					bitmap.getB()[k] = 0;
-					if (bitmap.getA() != null) bitmap.getA()[k] = 0;
-				}
-			}
+			bitmap = new Bitmap(bitmap.getR(), bitmap.getG(), bitmap.getB(), bitmap.getA(), width, height);
+			invalidate();
 		}
 		
 		this.r = bitmap.getR();

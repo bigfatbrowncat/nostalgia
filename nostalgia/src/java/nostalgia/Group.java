@@ -1,6 +1,5 @@
 package nostalgia;
 
-import quicktime.app.display.Drawable;
 import nostalgia.graphics.Bitmap;
 import nostalgia.graphics.Painter;
 

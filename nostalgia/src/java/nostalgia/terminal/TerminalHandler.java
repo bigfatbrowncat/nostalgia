@@ -81,4 +81,7 @@ public abstract class TerminalHandler extends Handler {
 		
 	}
 	
+	public TerminalHandler(Font font) {
+		this.font = font;
+	}
 }
